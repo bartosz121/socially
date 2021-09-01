@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "social-network-django"
+version = "0.1.0"
+description = "Social network website created in django"
+authors = ["Your Name <you@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+Django = "^3.2.6"
+psycopg2 = "^2.9.1"
+django-environ = "^0.5.0"
+
+[tool.poetry.dev-dependencies]
+black = {version = "^21.8b0", allow-prereleases = true}
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 79
+target-version = ['py38']
+include = '\.pyi?$'
+exclude = '''
+
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+  )/
+)
+'''
