@@ -138,3 +138,10 @@ dmypy.json
 cython_debug/
 .vscode
 .env
+
+# profile pics/backgrunds
+media/profile_backgrounds/*
+!media/profile_backgrounds/default.png
+
+media/profile_pictures/*
+!media/profile_pictures/default.png
