@@ -13,7 +13,7 @@ class Profile(models.Model):
         upload_to="profile_backgrounds",
         default="profile_backgrounds/default.png",
     )
-    bio = models.TextField(blank=True)
+    bio = models.TextField(max_length=300, blank=True)
     following = models.ManyToManyField(
         User, related_name="following", blank=True
     )
