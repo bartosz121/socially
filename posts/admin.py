@@ -21,7 +21,6 @@ class PostAdmin(admin.ModelAdmin):
     search_fields = ("body",)
     date_hierarchy = "created"
     ordering = (
-        "id",
         "created",
         "updated",
     )
