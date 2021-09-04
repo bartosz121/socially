@@ -139,6 +139,9 @@ cython_debug/
 .vscode
 .env
 
+# pictures
+media/pictures
+
 # profile pics/backgrunds
 media/profile_backgrounds/*
 !media/profile_backgrounds/default.png
