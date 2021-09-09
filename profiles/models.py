@@ -1,11 +1,27 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
+from posts.models import Post
 
 # Create your models here.
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="profile",
+    )
+
+    username = models.CharField(
+        "username",
+        max_length=40,
+        unique=True,
+        default=None,
+        help_text="Required. 40 characters or fewer.",
+        error_messages={
+            "unique": "A user with that username already exists.",
+        },
+    )
     profile_picture = models.ImageField(
         upload_to="profile_pictures", default="profile_pictures/default.png"
     )
@@ -13,19 +29,66 @@ class Profile(models.Model):
         upload_to="profile_backgrounds",
         default="profile_backgrounds/default.png",
     )
-    bio = models.TextField(max_length=300, blank=True)
+    bio = models.TextField(
+        max_length=300, help_text="Write something about yourself!", blank=True
+    )
     following = models.ManyToManyField(
-        User, related_name="following", blank=True
+        settings.AUTH_USER_MODEL, related_name="following", blank=True
     )
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"#{self.user.pk} - {self.user.username}"
-
-    def get_posts(self):
-        return self.posts.all()
+        return f"#{self.user.pk} - {self.username}"
 
     @property
     def posts_count(self):
         return self.posts.all().count()
+
+    @property
+    def following_count(self):
+        return self.following.all().count()
+
+    @property
+    def followers_count(self):
+        return len(self.get_followers())
+
+    def get_posts(self):
+        return self.posts.all().order_by("created")
+
+    def get_following(self):
+        return (
+            Profile.objects.get(user=user) for user in self.following.all()
+        )
+
+    def get_following_users_posts(self):
+        # for user in self.get_following():
+        #     posts.append(Post.objects.filter(author=user))
+        # if len(posts) > 0:
+        #     return sorted(
+        #         chain(*posts), reverse=True, key=lambda post: post.created
+        #     )
+        posts = (
+            Post.objects.all()
+            .filter(author__in=self.get_following())
+            .order_by("-created")
+        )
+        return posts
+
+    def get_followers(self):
+        qs = Profile.objects.all().exclude(user=self.user)
+        followers = [
+            profile for profile in qs if self in profile.get_following()
+        ]
+        return followers
+
+    # TODO make this more 'smart'
+    def get_follow_suggestions(self):
+        profiles = Profile.objects.all().exclude(user=self.user)
+        following = [profile for profile in self.get_following()]
+        profiles = list(
+            filter(lambda profile: profile not in following, profiles)
+        )
+        if len(profiles) > 3:
+            return profiles[:3]
+        return profiles
