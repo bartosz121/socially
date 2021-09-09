@@ -1,31 +1,42 @@
 from django.db import models
-from django.contrib.auth.models import User
-from profiles.models import Profile
+from django.conf import settings
 
 # Create your models here.
 
 
 class Post(models.Model):
-    picture = models.ImageField(upload_to="pictures", blank=True)
-    body = models.TextField(max_length=300)
-    author = models.ForeignKey(
-        Profile, on_delete=models.CASCADE, default=None, related_name="posts"
+    parent = models.ForeignKey(
+        "self", on_delete=models.SET_NULL, null=True, blank=True
     )
-    liked = models.ManyToManyField(User, default=None, blank=True)
+    picture = models.ImageField(upload_to="pictures", blank=True)
+    body = models.TextField(max_length=100)
+    author = models.ForeignKey(
+        "profiles.Profile",
+        on_delete=models.CASCADE,
+        default=None,
+        related_name="posts",
+    )
+    liked = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, default=None, blank=True
+    )
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.pk} by {self.author.user.username}"
+        return f"{self.pk} by {self.author.username}"
 
     def get_liked(self):
-        """Returns users that liked the post"""
+        """Return users that liked the post"""
         return self.liked.all()
 
     def get_user_liked(self, user):
-        """Does given user liked the post"""
+        """Did given user like the post"""
         pass
 
     @property
     def like_count(self):
         return self.liked.all().count()
+
+    @property
+    def author_username(self):
+        return self.author.username
