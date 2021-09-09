@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Settings
+{% endblock title %}
+
+{% block content %}
+<div class="settings sm w-50 mx-auto">
+    <h1>Account Settings</h1>
+    <div class="accordion" id="settings-accordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                Your account
+            </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#settings-accordion">
+            <div class="accordion-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{email_form | crispy}}
+                    <input class="btn btn-primary" type='submit' name="email_form" value="Update"/>
+                </form>
+            </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                Your profile
+            </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#settings-accordion">
+            <div class="accordion-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{profile_form | crispy}}
+                    <input class="btn btn-primary" type='submit' name="profile_form" value="Update"/>
+                </form>
+            </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingThree">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                Delete account
+            </button>
+            </h2>
+            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#settings-accordion">
+            <div class="accordion-body">
+                <button type="button" class="btn btn-danger">Delete account</button>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
