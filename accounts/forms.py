@@ -5,13 +5,21 @@ from .models import CustomUser
 
 
 class EmailAddressForm(forms.Form):
-    email = forms.EmailField(required=True)
+    email = forms.EmailField(label="Email address", required=True)
 
-    def clean(self):
+    def __init__(self, user_obj, *args, **kwargs):
+        super(EmailAddressForm, self).__init__(*args, **kwargs)
+        self.user_obj = user_obj
+
+    def clean_email(self):
         email = self.cleaned_data.get("email")
 
-        if not CustomUser.objects.filter(email=email).exists():
-            return {"email": email}
+        if (
+            not CustomUser.objects.exclude(pk=self.user_obj.pk)
+            .filter(email=email)
+            .exists()
+        ):
+            return email
         raise forms.ValidationError(
             "User with this Email address already exists."
         )
