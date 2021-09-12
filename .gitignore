@@ -148,3 +148,5 @@ media/profile_backgrounds/*
 
 media/profile_pictures/*
 !media/profile_pictures/default.png
+
+static/CACHE
