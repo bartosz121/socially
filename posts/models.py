@@ -9,7 +9,7 @@ class Post(models.Model):
         "self", on_delete=models.SET_NULL, null=True, blank=True
     )
     picture = models.ImageField(upload_to="pictures", blank=True)
-    body = models.TextField(max_length=100)
+    body = models.TextField(max_length=300)
     author = models.ForeignKey(
         "profiles.Profile",
         on_delete=models.CASCADE,
