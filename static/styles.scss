@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+.navbar {
+    &-icon {
+        height: 25px;
+        margin-right: 5px;
+        margin-bottom: 2px;
+    }
+
+    &-brand {
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+}
+
+.profile {
+    &-background {
+        img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: fill;
+        }
+    }
+
+    &-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+
+        img {
+            width: 150px;
+            height: 150px;
+            margin-top: -8%;
+        }
+
+        .follow-info {
+            width: 50%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-around;
+        }
+    }
+
+    &-bio {
+        p {
+            text-align: center;
+        }
+    }
+
+    &-picture-small {
+        height: 30px;
+        width: 30px;
+        margin-right: 5px;
+    }
+
+    &-picture-medium {
+        height: 50px;
+        width: 50px;
+        margin-right: 5px;
+    }
+}
+
+.post {
+    abbr {
+        text-decoration: none;
+    }
+
+    &-head {
+        display: flex;
+        flex-direction: row;
+    }
+
+    &-time {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+.form {
+    &-container {
+        max-width: 576px;
+        margin: auto;
+    }
+}
+
+.truncate-text {
+    max-width: 90vw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (min-width: 768px) {
+    .settings {
+        width: 70%;
+    }
+
+    .profile {
+        &-header {
+            flex-direction: row;
+            justify-content: space-evenly;
+
+            button {
+                margin: auto;
+            }
+
+            &-username {
+                margin-top: 15px;
+            }
+
+            .follow-info {
+                margin-top: 15px;
+                width: 25%;
+            }
+        }
+
+        &-bio {
+            p {
+                margin-right: 10%;
+                margin-left: 10%;
+            }
+        }
+    }
+}
