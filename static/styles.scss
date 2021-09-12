@@ -18,6 +18,12 @@ body {
 }
 
 .profile {
+    &-body {
+        .no-posts-msg {
+            text-align: center;
+        }
+    }
+
     &-background {
         img {
             width: 100%;
