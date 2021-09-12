@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.urls import reverse
 from posts.models import Post
 
 # Create your models here.
@@ -30,7 +31,7 @@ class Profile(models.Model):
         default="profile_backgrounds/default.png",
     )
     bio = models.TextField(
-        max_length=300, help_text="Write something about yourself!", blank=True
+        max_length=180, help_text="Write something about yourself!", blank=True
     )
     following = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name="following", blank=True
@@ -53,11 +54,16 @@ class Profile(models.Model):
     def followers_count(self):
         return len(self.get_followers())
 
+    def get_absolute_url(self):
+        return reverse(
+            "profiles:profile-detail", kwargs={"username": self.username}
+        )
+
     def get_posts(self):
         return self.posts.all().order_by("created")
 
     def get_following(self):
-        return (
+        return list(
             Profile.objects.get(user=user) for user in self.following.all()
         )
 
