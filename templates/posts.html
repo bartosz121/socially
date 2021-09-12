@@ -25,10 +25,9 @@
             </div>
             {% if post.picture %}
                 <div class="post-picture">
-                    <img class="img-thumbnail mx-auto d-block" src={{ post.picture.url }} alt="post picture" />
+                    <img width="200px" height="200px" class="img-thumbnail mx-auto d-block" src={{ post.picture.url }} alt="post picture" />
                 </div>
             {% endif %}
         </div>
     {% endfor %}
-    </div>
 </div>
