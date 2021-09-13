@@ -3,7 +3,9 @@
         <div class="post my-4 h-100 p-5 bg-light border rounded-3">
             <div class="post-head mb-2">
                 <div class="author-picture">
-                    <img class="profile-picture-medium rounded" src={{ post.author.profile_picture.url }} alt="profile picture"/>
+                    <a href="{{ post.author.get_absolute_url }}">
+                        <img class="profile-picture-medium rounded" src={{ post.author.profile_picture.url }} alt="profile picture"/>
+                    </a>
                 </div>
                 <div class="post-info ms-2">
                     <div class="post-author-username">
@@ -25,7 +27,7 @@
             </div>
             {% if post.picture %}
                 <div class="post-picture">
-                    <img width="200px" height="200px" class="img-thumbnail mx-auto d-block" src={{ post.picture.url }} alt="post picture" />
+                    <img class="post-img modal-img img-thumbnail mx-auto d-block" src={{ post.picture.url }} alt="post picture" />
                 </div>
             {% endif %}
         </div>
