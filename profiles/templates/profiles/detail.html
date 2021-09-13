@@ -7,10 +7,10 @@
 {% block content %}
     <div class="profile-container">
         <div class="profile-background">
-            <img class="w-100 rounded-3" src={{ profile.profile_background.url }} alt="Profile background"/>
+            <img class="w-100 rounded-3 modal-img" src={{ profile.profile_background.url }} alt="Profile background"/>
         </div>
         <div class="profile-header rounded-3">
-            <img class="img-thumbnail" src={{ profile.profile_picture.url }} alt="" srcset="">
+            <img class="img-thumbnail modal-img" src={{ profile.profile_picture.url }} alt="" srcset="">
             <p class="display-6 profile-header-username">{{ profile.username }}</p>
             <div class="follow-info">
             <div class="following">{{ profile.following_count }} <small class="text-muted">Following</small></div>
@@ -19,24 +19,24 @@
             <div class="profile-bio w-100 mt-2 text-muted">
                 <p>{{ profile.bio }}</p>
             </div>
-            {% if request.user.profile != profile %}
-                {% if profile not in request.user.profile.get_following  %}
-                    <button type="button" class="btn btn-primary">Follow</button>
-                {% else %}
-                    <button type="button" class="btn btn-outline-primary">Following</button>
-                {% endif %}
             <div class="follow-btn-wrapper">
-            {% endif %}
+                {% if request.user.profile != profile %}
+                    {% if profile not in request.user.profile.get_following  %}
+                        <button type="button" class="btn btn-primary">Follow</button>
+                    {% else %}
+                        <button type="button" class="btn btn-outline-primary">Following</button>
+                    {% endif %}
+                {% endif %}
             </div>
         </div>
         <div class="profile-body">
-        {% if profile.posts_count > 0 %}
-            {% include 'posts.html' %}
-        {% else %}
-        <div class="no-posts-msg mt-4">
-            <h4>No posts yet!</h4>
-        </div>
-        {% endif %}
+            {% if profile.posts_count > 0 %}
+                {% include 'posts.html' %}
+            {% else %}
+            <div class="no-posts-msg mt-4">
+                <h4>No posts yet!</h4>
+            </div>
+            {% endif %}
         </div>
     </div>
 {% endblock content %}
