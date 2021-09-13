@@ -46,7 +46,7 @@ body {
         }
 
         .follow-info {
-            width: 50%;
+            width: 80%;
             display: flex;
             flex-direction: row;
             align-items: center;
@@ -96,6 +96,18 @@ body {
     }
 }
 
+.modal {
+    &-body {
+        img {
+            max-width: 100%;
+        }
+    }
+
+    &-img {
+        cursor: pointer;
+    }
+}
+
 .truncate-text {
     max-width: 90vw;
     white-space: nowrap;
@@ -123,7 +135,7 @@ body {
 
             .follow-info {
                 margin-top: 15px;
-                width: 25%;
+                width: 40%;
             }
         }
 
