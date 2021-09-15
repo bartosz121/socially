@@ -17,7 +17,10 @@ class Post(models.Model):
         related_name="posts",
     )
     liked = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, default=None, blank=True
+        settings.AUTH_USER_MODEL,
+        default=None,
+        blank=True,
+        related_name="liked",
     )
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -31,7 +34,9 @@ class Post(models.Model):
 
     def get_user_liked(self, user):
         """Did given user like the post"""
-        pass
+        if user in self.get_liked():
+            return True
+        return False
 
     @property
     def like_count(self):
