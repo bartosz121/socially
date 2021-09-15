@@ -1,13 +1,9 @@
 from django.urls import path
-from .views import home_view, PostDetailView
+from .views import home_view, HandleLike
 
 app_name = "posts"
 
 urlpatterns = [
     path("", home_view, name="home-view"),
-    path(
-        "post/<str:author_username>/<int:pk>/",
-        PostDetailView.as_view(),
-        name="post-detail",
-    ),
+    path("handlelike/<int:pk>", HandleLike.as_view(), name="handle-like"),
 ]
