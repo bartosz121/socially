@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
 $bootstrapBlue: #0275d8;
+$bootstrapRed: #dc3545;
 
 @mixin hotpink-color-with-drop-shadow {
     color: hotpink;
@@ -166,6 +167,25 @@ body {
 
     &-img {
         cursor: pointer;
+    }
+}
+
+.follow-btn-wrapper {
+    button {
+        width: 100px;
+    }
+
+    .following-btn:hover {
+        color: $bootstrapRed;
+        border-color: $bootstrapRed;
+        background-color: rgba($bootstrapRed, 0.2);
+
+        span {
+            display: none;
+        }
+        &::before {
+            content: "Unfollow"
+        }
     }
 }
 
