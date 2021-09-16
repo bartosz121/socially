@@ -62,13 +62,17 @@ class Profile(models.Model):
     def get_posts(self):
         return self.posts.all().order_by("created")
 
-    def get_following(self):
+    def get_following_profiles(self):
         return list(
             Profile.objects.get(user=user) for user in self.following.all()
         )
 
-    def get_following_users_posts(self):
-        # for user in self.get_following():
+    def get_user_follow_status(self, target_user):
+        """Is 'this' user following given user"""
+        return target_user.profile in self.get_following_profiles()
+
+    def get_following_profiles_users_posts(self):
+        # for user in self.get_following_profiles():
         #     posts.append(Post.objects.filter(author=user))
         # if len(posts) > 0:
         #     return sorted(
@@ -76,7 +80,7 @@ class Profile(models.Model):
         #     )
         posts = (
             Post.objects.all()
-            .filter(author__in=self.get_following())
+            .filter(author__in=self.get_following_profiles())
             .order_by("-created")
         )
         return posts
@@ -84,14 +88,16 @@ class Profile(models.Model):
     def get_followers(self):
         qs = Profile.objects.all().exclude(user=self.user)
         followers = [
-            profile for profile in qs if self in profile.get_following()
+            profile
+            for profile in qs
+            if self in profile.get_following_profiles()
         ]
         return followers
 
     # TODO make this more 'smart'
     def get_follow_suggestions(self):
         profiles = Profile.objects.all().exclude(user=self.user)
-        following = [profile for profile in self.get_following()]
+        following = [profile for profile in self.get_following_profiles()]
         profiles = list(
             filter(lambda profile: profile not in following, profiles)
         )
