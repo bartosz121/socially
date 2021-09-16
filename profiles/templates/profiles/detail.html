@@ -14,19 +14,23 @@
             <p class="display-6 profile-header-username">{{ profile.username }}</p>
             <div class="follow-info">
             <div class="following">{{ profile.following_count }} <small class="text-muted">Following</small></div>
-            <div class="followers">{{ profile.followers_count }} <small class="text-muted">Followers</small></div>
+            <div class="followers"><span id="followers-count-{{ profile.user.pk }}">{{ profile.followers_count }}</span> <small class="text-muted">Followers</small></div>
             </div>
             <div class="profile-bio w-100 mt-2 text-muted">
                 <p>{{ profile.bio }}</p>
             </div>
             <div class="follow-btn-wrapper">
-                {% if request.user.profile != profile %}
-                    {% if profile not in request.user.profile.get_following  %}
-                        <button type="button" class="btn btn-primary">Follow</button>
-                    {% else %}
-                        <button type="button" class="btn btn-outline-primary">Following</button>
+                <form action="{% url 'profiles:handle-follow' profile.user.pk %}" method="post" class="follow-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="user-id" value="{{ profile.user.pk }}">
+                    {% if request.user.profile != profile %}
+                        {% if profile not in request.user.profile.get_following_profiles  %}
+                            <button type="submit" class="btn btn-primary follow-btn" id="follow-btn-{{ profile.user.pk }}"><span>Follow</span></button>
+                        {% else %}
+                            <button type="submit" class="btn btn-outline-primary following-btn" id="follow-btn-{{ profile.user.pk }}"><span>Following</span></button>
+                        {% endif %}
                     {% endif %}
-                {% endif %}
+                </form>
             </div>
         </div>
         <div class="profile-body">
