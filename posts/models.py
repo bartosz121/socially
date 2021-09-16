@@ -34,9 +34,7 @@ class Post(models.Model):
 
     def get_user_liked(self, user):
         """Did given user like the post"""
-        if user in self.get_liked():
-            return True
-        return False
+        return user in self.get_liked()
 
     @property
     def like_count(self):
