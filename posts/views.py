@@ -1,27 +1,42 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
-from django.views.generic.detail import DetailView
 from .models import Post
+from .forms import PostForm
 
 # Create your views here.
 
 
-def home_view(request):
-    if request.user.is_authenticated:
-        followed_users_posts = request.user.profile.get_following_users_posts()
+class HomeView(View):
+    template_name = "posts/main.html"
+
+    def get_context_data(self, **kwargs):
+        kwargs["posts"] = Post.objects.all().order_by("-created")
+        if "form" not in kwargs:
+            kwargs["form"] = PostForm()
+        return kwargs
+
+    def post(self, request, *args, **kwargs):
+        context = {}
+
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.instance.author = request.user.profile
+            form.save()
+            messages.success(request, "Posted!")
+            return redirect("posts:home-view")
+        else:
+            messages.error(request, "Something went wrong...")
+            context["form"] = form
+
         return render(
-            request,
-            "posts/main.html",
-            {"posts": followed_users_posts},
+            request, self.template_name, self.get_context_data(**context)
         )
-    else:
-        return render(
-            request,
-            "posts/main.html",
-            {"posts": Post.objects.all().order_by("-created")},
-        )
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, self.get_context_data())
 
 
 # class PostDetailView(DetailView):
