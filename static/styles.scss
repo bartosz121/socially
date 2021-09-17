@@ -121,6 +121,11 @@ body {
                 border: none;
             }
 
+            &-btn:focus {
+                outline: none;
+                box-shadow: none;
+            }
+
             .icon {
                 font-size: 1.5rem;
             }
