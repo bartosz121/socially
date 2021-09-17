@@ -29,7 +29,6 @@ class ProfileForm(ModelForm):
         profile = super(ProfileForm, self).save(commit=False)
         profile.username = self.cleaned_data["username"]
         profile.profile_picture = self.cleaned_data["profile_picture"]
-        print(self.cleaned_data)
         profile.profile_background = self.cleaned_data["profile_background"]
         profile.bio = self.cleaned_data["bio"]
         if commit:
