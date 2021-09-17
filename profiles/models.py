@@ -60,7 +60,7 @@ class Profile(models.Model):
         )
 
     def get_posts(self):
-        return self.posts.all().order_by("created")
+        return self.posts.all().order_by("-created")
 
     def get_following_profiles(self):
         return list(
