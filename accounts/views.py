@@ -66,47 +66,47 @@ class SettingsView(View):
         context = {}
         if "email_form" in request.POST:
             email_form = EmailAddressForm(
-                user_obj=self.request.user, data=request.POST
+                user_obj=request.user, data=request.POST
             )
 
             if email_form.is_valid():
                 email = email_form.cleaned_data.get("email")
-                user = CustomUser.objects.get(pk=self.request.user.pk)
+                user = CustomUser.objects.get(pk=request.user.pk)
                 user.email = email
                 user.save()
-                messages.success(self.request, "Email address changed.")
+                messages.success(request, "Email address changed.")
                 return redirect("accounts:settings")
 
             else:
-                messages.error(self.request, "Please correct the error below.")
+                messages.error(request, "Please correct the error below.")
                 context["email_form"] = email_form
 
         if "password_change_form" in request.POST:
             password_change_form = PasswordChangeForm(
-                self.request.user, request.POST
+                request.user, request.POST
             )
 
             if password_change_form.is_valid():
                 password_change_form.save()
                 update_session_auth_hash(request, password_change_form.user)
-                messages.success(self.request, "Password changed.")
+                messages.success(request, "Password changed.")
                 return redirect("accounts:settings")
             else:
-                messages.error(self.request, "Please correct the error below.")
+                messages.error(request, "Please correct the error below.")
                 context["password_change_form"] = password_change_form
 
         if "profile_form" in request.POST:
             profile_form = ProfileForm(
-                request.POST, request.FILES, instance=self.request.user.profile
+                request.POST, request.FILES, instance=request.user.profile
             )
 
             if profile_form.is_valid():
                 profile_form.save()
-                messages.success(self.request, "Profile updated.")
+                messages.success(request, "Profile updated.")
                 return redirect("accounts:settings")
 
             else:
-                messages.error(self.request, "Please correct the error below.")
+                messages.error(request, "Please correct the error below.")
                 context["profile_form"] = profile_form
 
         return render(
