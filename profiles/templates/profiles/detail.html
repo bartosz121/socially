@@ -23,12 +23,23 @@
                 <form action="{% url 'profiles:handle-follow' profile.user.pk %}" method="post" class="follow-form">
                     {% csrf_token %}
                     <input type="hidden" name="user-id" value="{{ profile.user.pk }}">
-                    {% if request.user.profile != profile %}
-                        {% if profile not in request.user.profile.get_following_profiles  %}
-                            <button type="submit" class="btn btn-primary follow-btn" id="follow-btn-{{ profile.user.pk }}"><span>Follow</span></button>
-                        {% else %}
-                            <button type="submit" class="btn btn-outline-primary following-btn" id="follow-btn-{{ profile.user.pk }}"><span>Following</span></button>
+                    {% if request.user.is_authenticated %}
+                        {% if request.user.profile != profile %}
+                            {% if profile in request.user.profile.get_following_profiles  %}
+                                <button type="submit" class="btn btn-outline-primary following-btn" id="follow-btn-{{ profile.user.pk }}">
+                                    <span>Following</span>
+                                </button>
+                            {% else %}
+                                <button type="submit" class="btn btn-primary follow-btn" id="follow-btn-{{ profile.user.pk }}">
+                                    <span>Follow</span>
+                                </button>
+                            {% endif %}
                         {% endif %}
+                    {% else %}
+                        <input type="hidden" name="user-not-authenticated">
+                        <button type="submit" class="btn btn-primary follow-btn" id="follow-btn-{{ profile.user.pk }}">
+                            <span>Follow</span>
+                        </button>
                     {% endif %}
                 </form>
             </div>
