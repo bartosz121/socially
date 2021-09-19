@@ -11,7 +11,7 @@ class CustomUserManager(BaseUserManager):
     instead of username
     """
 
-    def create_user(self, email, password, superuser, **fields):
+    def create_user(self, email, password, superuser=False, **fields):
         if not email:
             raise ValueError("The Email must be set")
         email = self.normalize_email(email)
