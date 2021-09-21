@@ -38,15 +38,19 @@
             <hr>
             <div class="post-bottom">
                 <div class="post-actions">
-                    <div class="action action-chat">
-                        <div class="icon">
-                            <i class="bi bi-chat"></i>
-                        </div>
-                        <div class="count">
-                            {% if post.comment_count > 0 %}
-                                <span>{{ post.comment_count }}</span>
-                            {% endif %}
-                        </div>
+                    <div class="action chat-wrapper">
+                        <a href="{{ post.get_absolute_url }}">
+                            <div class="action action-chat">
+                                <div class="icon">
+                                    <i class="bi bi-chat"></i>
+                                </div>
+                                <div class="count">
+                                    {% if post.comment_count > 0 %}
+                                        <span>{{ post.comment_count }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </a>
                     </div>
                     <div class="action like-wrapper">
                         <form action="{% url 'posts:handle-like' post.pk %}" method="post" class="like-form">
