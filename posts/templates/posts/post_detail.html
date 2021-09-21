@@ -6,7 +6,7 @@
 {% endblock title %}
 
 {% block content %}
-    <div class="post my-sm-4 h-100 p-5 bg-light border rounded-3">
+    <div class="post my-4 p-5 bg-light border rounded-3">
         <div class="post-head mb-2">
             <div class="author-picture">
                 <a href="{{ post.author.get_absolute_url }}">
@@ -94,7 +94,22 @@
             </div>
         </div>
     </div>
-    {{comments}}
+    {% if post.comment_count > 0 %}
+        <div class="post-comments my-4">
+            <div class="post-comments-title">
+                <h3>Comments</h3>
+            </div>
+            <div class="post-comments-content">
+                <ul class="list-group">
+                {% for comment in comments %}
+                    <li class="list-group-item">
+                        {% include 'posts/post.html' with post=comment %}
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
 {% endblock content %}
 
 {% block scripts %}
