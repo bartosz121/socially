@@ -31,6 +31,13 @@
             </div>
         </div>
         <div class="post-body">
+            {% if post.parent %}
+                <div class="post-parent">
+                    <a href="{{ post.parent.get_absolute_url }}">
+                        <small class="parent-info text-muted">Replying to {{ post.parent.author.username}}</small>
+                    </a>
+                </div>
+            {% endif %}
             <p class="post-body-detail">{{ post.body }}</p>
         </div>
         {% if post.picture %}
