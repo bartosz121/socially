@@ -6,6 +6,26 @@
 {% endblock title %}
 
 {% block content %}
+    <div class="modal fade" id="likesModal" tabindex="-1" aria-labelledby="likesModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="likesModalLabel">Likes</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% for like_user in post.get_liked %}
+                    <a href="{{ like_user.profile.get_absolute_url }}">
+                        <p>{{ like_user.profile.username }}</p>
+                    </a>
+                {% endfor %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
+    </div>
     <div class="post my-4 p-5 bg-light border rounded-3">
         <div class="post-head mb-2">
             <div class="author-picture">
@@ -48,13 +68,8 @@
         <hr>
         <div class="post-bottom">
             <div class="post-stats">
-            {% if post.comment_count > 0 %}
-                <div class="stat stat-comment-count mx-2">
-                    <span class="text-muted">Comments:</span><span class="mx-2">{{post.comment_count}}</span>
-                </div>
-            {% endif %}
             {% if post.like_count > 0 %}
-                <div class="stat stat-like-count mx-2">
+                <div class="stat stat-like-count mx-2" data-bs-toggle="modal" data-bs-target="#likesModal">
                     <span class="text-muted">Likes:</span><span class="mx-2" id='like-count-post-{{ post.pk }}'>{{post.like_count}}</span>
                 </div>
             {% endif %}
@@ -66,6 +81,9 @@
                         <i class="bi bi-chat"></i>
                     </div>
                     <div class="count">
+                        {% if post.comment_count > 0 %}
+                            <span>{{ post.comment_count }}</span>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="action like-wrapper">
@@ -95,7 +113,7 @@
         </div>
     </div>
     {% if post.comment_count > 0 %}
-        <div class="post-comments my-4">
+        <div class="post-comments my-4" id="comments">
             <div class="post-comments-title">
                 <h3>Comments</h3>
             </div>
