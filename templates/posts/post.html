@@ -22,7 +22,13 @@
             </div>
         </div>
         <div class="post-dots ms-auto text-muted">
-            <i class="bi bi-three-dots-vertical"></i>
+            <i class="bi bi-three-dots-vertical" type="button" id="postDetailDropdownMenuButton{{ post.pk }}" data-bs-toggle="dropdown" aria-expanded="false"></i>
+            <ul class="dropdown-menu" aria-labelledby="postDetailDropdownMenuButton{{ post.pk }}">
+                <li><a class="dropdown-item" href="{{ post.get_absolute_url }}"><i class="bi bi-box-arrow-right me-2"></i><span>Check post page</span></a></li>
+                <li><a class="dropdown-item" href="{{ post.author.get_absolute_url }}"><i class="bi bi-person-circle me-2"></i><span>Check author profile</span></a></li>
+                <li><hr></li>
+                <li><a class="dropdown-item disabled" href="#"><i class="bi bi-flag me-2"></i><span>Report post TODO</span></a></li>
+            </ul>
         </div>
     </div>
     <div class="post-body">
