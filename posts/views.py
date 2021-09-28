@@ -3,6 +3,7 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
+from django.views.generic import DetailView
 from .models import Post
 from .forms import PostForm
 
@@ -39,14 +40,14 @@ class HomeView(View):
         return render(request, self.template_name, self.get_context_data())
 
 
-# class PostDetailView(DetailView):
-#     model = Post
-#     template_name = "posts/detail.html"
+class PostDetailView(DetailView):
+    model = Post
+    template_name = "posts/post_detail.html"
 
-#     def get_queryset(self, *args, **kwargs):
-#         user = User.objects.get(username=self.kwargs["author_username"])
-#         profile = Profile.objects.get(user=user)
-#         return super().get_queryset(*args, **kwargs).filter(author=profile)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["comments"] = Post.objects.filter(parent=context["post"])
+        return context
 
 
 class HandleLike(LoginRequiredMixin, View):
