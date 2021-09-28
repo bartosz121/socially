@@ -37,8 +37,3 @@ class HandleFollow(LoginRequiredMixin, View):
         response["followers"] = target_user.profile.followers_count
 
         return JsonResponse(response, safe=False)
-
-    def get(self, request, pk, *args, **kwargs):
-        return redirect(
-            "profiles:profile-detail", request.user.profile.username
-        )

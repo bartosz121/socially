@@ -66,7 +66,3 @@ class HandleLike(LoginRequiredMixin, View):
         response["likes"] = post.like_count
 
         return JsonResponse(response, safe=False)
-
-    def get(self, request, pk, *args, **kwargs):
-        # TODO redirect to post detail
-        return redirect("posts:home-view")
