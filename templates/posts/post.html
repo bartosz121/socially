@@ -90,7 +90,12 @@
             </div>
             <div class="action action-share">
                 <div class="icon">
-                    <i class="bi bi-box-arrow-up"></i>
+                    <i class="bi bi-box-arrow-up"  type="button" id="postShareDropdown{{ post.pk }}" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                    <ul class="dropdown-menu post-share-menu" aria-labelledby="postShareDropdown{{ post.pk }}">
+                        <input type="hidden" name="post-url" value="{{ post.get_absolute_url }}">
+                        <li data-toggle="popover" title="Copied!"><a class="dropdown-item copyUrl {{post.pk}}"><i class="bi bi-link-45deg me-2"></i><span>Copy post URL</span></a></li>
+                        <li><a class="dropdown-item disabled"><i class="bi bi-envelope me-2"></i><span>Send via message TODO</span></a></li>
+                    </ul>
                 </div>
             </div>
         </div>
