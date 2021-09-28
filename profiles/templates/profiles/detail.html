@@ -46,7 +46,11 @@
         </div>
         <div class="profile-body">
             {% if profile.posts_count > 0 %}
-                {% include 'posts.html' %}
+                <div class="posts">
+                    {% for post in posts %}
+                        {% include 'posts/post.html' %}
+                    {% endfor %}
+                </div>
             {% else %}
             <div class="no-posts-msg mt-4">
                 <h4>No posts yet!</h4>
@@ -55,3 +59,9 @@
         </div>
     </div>
 {% endblock content %}
+
+{% block scripts %}
+    {% if user.is_authenticated %}
+        <script src={% static 'postsScript.js' %} defer></script>
+    {% endif %}
+{% endblock scripts %}
