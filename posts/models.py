@@ -1,5 +1,7 @@
 from django.db import models
+from django.urls import reverse
 from django.conf import settings
+from django.shortcuts import redirect
 
 # Create your models here.
 
@@ -28,9 +30,16 @@ class Post(models.Model):
     def __str__(self):
         return f"{self.pk} by {self.author.username}"
 
+    def get_absolute_url(self):
+        return reverse("posts:post-detail", kwargs={"pk": self.pk})
+
     def get_liked(self):
         """Return users that liked the post"""
         return self.liked.all()
+
+    def get_comments(self):
+        """Return posts with 'parent' set to 'this' post"""
+        return Post.objects.filter(parent=self)
 
     def get_user_liked(self, user):
         """Did given user like the post"""
@@ -39,6 +48,10 @@ class Post(models.Model):
     @property
     def like_count(self):
         return self.liked.all().count()
+
+    @property
+    def comment_count(self):
+        return self.get_comments().count()
 
     @property
     def author_username(self):
