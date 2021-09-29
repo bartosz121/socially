@@ -47,6 +47,7 @@
         <div class="profile-body">
             {% if profile.posts_count > 0 %}
                 <div class="posts">
+                    {% comment %} <input type="hidden" id="csrfToken" name="csrfmiddlewaretoken" value={{ csrf_token }}> {% endcomment %}
                     {% for post in posts %}
                         {% include 'posts/post.html' %}
                     {% endfor %}
@@ -61,7 +62,8 @@
 {% endblock content %}
 
 {% block scripts %}
+    <script type="module" src={% static 'postsScript.js' %} defer></script>
     {% if user.is_authenticated %}
-        <script src={% static 'postsScript.js' %} defer></script>
+        <script type="module" src={% static 'postsScriptLoggedIn.js' %} defer></script>
     {% endif %}
 {% endblock scripts %}

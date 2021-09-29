@@ -18,7 +18,8 @@
 {% endblock content %}
 
 {% block scripts %}
+    <script type="module" src={% static 'postsScript.js' %} defer></script>
     {% if user.is_authenticated %}
-        <script src={% static 'postsScript.js' %} defer></script>
+        <script type="module" src={% static 'postsScriptLoggedIn.js' %} defer></script>
     {% endif %}
 {% endblock scripts %}
