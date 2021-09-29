@@ -13,7 +13,6 @@ likeForms.forEach(form => {
     const likeContainer = document.getElementById(`like-container-post-${postId}`)
     const likeIcon = document.getElementById(`like-icon-${postId}`)
     const likeCount = document.getElementById(`like-count-post-${postId}`)
-    const csrfToken = form.elements.namedItem('csrfmiddlewaretoken').value
 
     fetch(form.action, {
       method: 'POST',

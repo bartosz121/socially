@@ -113,7 +113,6 @@
                 </div>
                 <div class="action like-wrapper">
                 <form action="{% url 'posts:handle-like' post.pk %}" method="post" class="like-form">
-                    {% csrf_token %}
                     <input type="hidden" name="post-id" value="{{ post.pk }}">
                     <button class="action-btn" type="submit">
                         <div class="action action-like {% if user in post.get_liked %}liked{% endif %}" id="like-container-post-{{ post.pk }}">

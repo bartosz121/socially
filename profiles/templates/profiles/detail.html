@@ -10,6 +10,7 @@
             <img class="w-100 rounded-3 modal-img" src={{ profile.profile_background.url }} alt="Profile background"/>
         </div>
         <div class="profile-header rounded-3">
+            <input type="hidden" id="csrfToken" name="csrfmiddlewaretoken" value={{ csrf_token }}>
             <img class="img-thumbnail modal-img" src={{ profile.profile_picture.url }} alt="" srcset="">
             <p class="display-6 profile-header-username">{{ profile.username }}</p>
             <div class="follow-info">
@@ -21,7 +22,6 @@
             </div>
             <div class="follow-btn-wrapper">
                 <form action="{% url 'profiles:handle-follow' profile.user.pk %}" method="post" class="follow-form">
-                    {% csrf_token %}
                     <input type="hidden" name="user-id" value="{{ profile.user.pk }}">
                     {% if request.user.is_authenticated %}
                         {% if request.user.profile != profile %}
@@ -47,7 +47,6 @@
         <div class="profile-body">
             {% if profile.posts_count > 0 %}
                 <div class="posts">
-                    {% comment %} <input type="hidden" id="csrfToken" name="csrfmiddlewaretoken" value={{ csrf_token }}> {% endcomment %}
                     {% for post in posts %}
                         {% include 'posts/post.html' %}
                     {% endfor %}
