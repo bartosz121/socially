@@ -1,9 +1,13 @@
+from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse
 from django.views import View
 from django.views.generic import DetailView
+from django.views.decorators.http import require_http_methods
 from .models import Post
 from .forms import PostForm
 
@@ -48,6 +52,22 @@ class PostDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context["comments"] = Post.objects.filter(parent=context["post"])
         return context
+
+
+@login_required
+@require_http_methods(["DELETE"])
+def delete_post(request, pk):
+    post = Post.objects.get(id=pk)
+    if request.user.profile != post.author and not request.user.is_staff:
+        raise PermissionDenied
+
+    post.delete()
+    response = {"result": "deleted", "redirect": False}
+
+    if request.GET.get("redirect") == "True":
+        response["redirect"] = True
+
+    return JsonResponse(response, safe=False)
 
 
 class HandleLike(LoginRequiredMixin, View):
