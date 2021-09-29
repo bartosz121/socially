@@ -26,7 +26,7 @@
             </div>
         </div>
     </div>
-    <div class="post my-4 p-5 bg-light border rounded-3">
+    <div class="post my-4 p-5 bg-light border rounded-3" id="post-{{ post.pk }}">
         <div class="post-head mb-2">
             <div class="author-picture">
                 <a href="{{ post.author.get_absolute_url }}">
@@ -49,6 +49,30 @@
                     {% endif %}
                 </div>
             </div>
+        <div class="post-dots ms-auto text-muted">
+            <i class="bi bi-three-dots-vertical" type="button" id="postDetailDropdownMenuButton{{ post.pk }}" data-bs-toggle="dropdown" aria-expanded="false"></i>
+            <ul class="dropdown-menu" aria-labelledby="postDetailDropdownMenuButton{{ post.pk }}">
+                <li><a class="dropdown-item" href="{{ post.author.get_absolute_url }}"><i class="bi bi-person-circle me-2"></i><span>Check author profile</span></a></li>
+                <li><hr></li>
+                {% if request.user.profile == post.author %}
+                    <li><a class="dropdown-item" href="{{ post.get_absolute_url }}"><i class="bi bi-pencil me-2"></i><span>Edit post</span></a></li>
+                    <form action="{% url 'posts:post-delete' post.pk %}?redirect=True" method="POST" class="delete-post-form">
+                        <input type="hidden" name="post-id" value="{{ post.pk }}">
+                        <li><button class="dropdown-item" type="submit"><i class="bi bi-trash me-2"></i><span>Delete post</span></button></li>
+                    </form>
+                    <li><hr></li>
+                {% endif %}
+                {% if request.user.is_staff %}
+                    <li><h4 class="dropdown-header"><i class="bi bi-tools me-2"></i>Admin panel<h4></li>
+                    <form action="{% url 'posts:post-delete' post.pk %}?redirect=True" method="POST" class="delete-post-form">
+                        <input type="hidden" name="post-id" value="{{ post.pk }}">
+                        <li><button class="dropdown-item" type="submit"><i class="bi bi-trash me-2"></i><span>Delete post</span></button></li>
+                    </form>
+                    <li><hr></li>
+                {% endif %}
+                <li><a class="dropdown-item disabled" href="#"><i class="bi bi-flag me-2"></i><span>Report post TODO</span></a></li>
+            </ul>
+        </div>
         </div>
         <div class="post-body">
             {% if post.parent %}
@@ -67,15 +91,16 @@
         {% endif %}
         <hr>
         <div class="post-bottom">
-            <div class="post-stats">
             {% if post.like_count > 0 %}
+            <div class="post-stats">
                 <div class="stat stat-like-count mx-2" data-bs-toggle="modal" data-bs-target="#likesModal">
                     <span class="text-muted">Likes:</span><span class="mx-2" id='like-count-post-{{ post.pk }}'>{{post.like_count}}</span>
                 </div>
-            {% endif %}
             </div>
-        <hr>
+            <hr>
+            {% endif %}
             <div class="post-actions">
+                <input type="hidden" id="csrfToken" name="csrfmiddlewaretoken" value={{ csrf_token }}>
                 <div class="action action-chat">
                     <div class="icon">
                         <i class="bi bi-chat"></i>
@@ -136,7 +161,8 @@
 {% endblock content %}
 
 {% block scripts %}
+    <script type="module" src={% static 'postsScript.js' %} defer></script>
     {% if user.is_authenticated %}
-        <script src={% static 'postsScript.js' %} defer></script>
+        <script type="module" src={% static 'postsScriptLoggedIn.js' %} defer></script>
     {% endif %}
 {% endblock scripts %}
