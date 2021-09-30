@@ -1,8 +1,9 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.views import View
 from django.views.generic.detail import DetailView
-from django.contrib.auth.mixins import LoginRequiredMixin
 from accounts.models import CustomUser
 from .models import Profile
 
@@ -37,3 +38,14 @@ class HandleFollow(LoginRequiredMixin, View):
         response["followers"] = target_user.profile.followers_count
 
         return JsonResponse(response, safe=False)
+
+    def get(self, pk, *args, **kwargs):
+        user = CustomUser.objects.filter(id=pk)
+        if not user:
+            return redirect("posts:home-view")
+        return redirect(
+            reverse(
+                "profiles:profile-detail",
+                kwargs={"username": user[0].profile.username},
+            )
+        )

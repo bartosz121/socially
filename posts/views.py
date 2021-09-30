@@ -4,6 +4,7 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse
 from django.views import View
 from django.views.generic import DetailView, UpdateView
 from django.views.decorators.http import require_http_methods
@@ -98,3 +99,11 @@ class HandleLike(LoginRequiredMixin, View):
         response["likes"] = post.like_count
 
         return JsonResponse(response, safe=False)
+
+    def get(self, request, pk, *args, **kwargs):
+        post = Post.objects.filter(id=pk)
+        if not post:
+            return redirect("posts:home-view")
+        return redirect(
+            reverse("posts:post-detail", kwargs={"pk": post[0].pk})
+        )
