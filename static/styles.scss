@@ -206,8 +206,15 @@ a, a:hover, a:focus, a:active {
 
 .form {
     &-container {
-        max-width: 576px;
-        margin: auto;
+        &-sm {
+            max-width: 576px;
+            margin: auto;
+        }
+
+        &-md {
+            max-width: 768px;
+            margin: auto;
+        }
     }
 }
 
