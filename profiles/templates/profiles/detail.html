@@ -22,6 +22,7 @@
             </div>
             <div class="follow-btn-wrapper">
                 <form action="{% url 'profiles:handle-follow' profile.user.pk %}" method="post" class="follow-form">
+                    {% csrf_token %}
                     <input type="hidden" name="user-id" value="{{ profile.user.pk }}">
                     {% if request.user.is_authenticated %}
                         {% if request.user.profile != profile %}
@@ -36,7 +37,6 @@
                             {% endif %}
                         {% endif %}
                     {% else %}
-                        <input type="hidden" name="user-not-authenticated">
                         <button type="submit" class="btn btn-primary follow-btn" id="follow-btn-{{ profile.user.pk }}">
                             <span>Follow</span>
                         </button>
