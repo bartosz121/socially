@@ -4,9 +4,8 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse
 from django.views import View
-from django.views.generic import DetailView
+from django.views.generic import DetailView, UpdateView
 from django.views.decorators.http import require_http_methods
 from .models import Post
 from .forms import PostForm
@@ -51,6 +50,19 @@ class PostDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["comments"] = Post.objects.filter(parent=context["post"])
+        return context
+
+
+class PostUpdateView(UpdateView):
+    model = Post
+    template_name = "posts/post_update.html"
+    fields = ["body", "picture"]
+    exclude = ["parent", "author", "liked", "created", "updated"]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.profile != context["post"].author:
+            raise PermissionDenied
         return context
 
 
