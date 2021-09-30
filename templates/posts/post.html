@@ -28,7 +28,7 @@
                 <li><a class="dropdown-item" href="{{ post.author.get_absolute_url }}"><i class="bi bi-person-circle me-2"></i><span>Check author profile</span></a></li>
                 <li><hr></li>
                 {% if request.user.profile == post.author %}
-                    <li><a class="dropdown-item" href="{{ post.get_absolute_url }}"><i class="bi bi-pencil me-2"></i><span>Edit post</span></a></li>
+                    <li><a class="dropdown-item" href="{% url 'posts:post-update' post.pk %}"><i class="bi bi-pencil me-2"></i><span>Edit post</span></a></li>
                     <form action="{% url 'posts:post-delete' post.pk %}" method="POST" class="delete-post-form">
                         <input type="hidden" name="post-id" value="{{ post.pk }}">
                         <li><button class="dropdown-item" type="submit"><i class="bi bi-trash me-2"></i><span>Delete post</span></button></li>
