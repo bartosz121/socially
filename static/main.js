@@ -25,3 +25,7 @@ window.onload = () => {
   checkImages()
   createOnClickModalImages()
 }
+
+window.onresize = () => {
+  checkImages()
+}
