@@ -2,6 +2,45 @@ import { animateCSS, buildAbsoluteUrl, abbreviateNumber } from "./utils.js"
 
 const csrfToken = document.getElementById('csrfToken').value;
 
+
+// Follow
+const followForms = document.querySelectorAll('.follow-form');
+followForms.forEach(form => {
+  form.addEventListener('submit', (e) => {
+    e.preventDefault()
+    const targetUserId = form.elements.namedItem("user-id").value
+    const targetUserFollowersCount = document.getElementById(`followers-count-${targetUserId}`)
+    const targetUserFollowBtn = document.getElementById(`follow-btn-${targetUserId}`);
+
+    fetch(form.action, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'X-CSRFToken': csrfToken
+      }
+    })
+      .then(response => {
+        return response.json()
+      })
+      .then(data => {
+        if (data.value === 'follow') {
+          targetUserFollowBtn.innerHTML = "<span>Following</span>"
+          targetUserFollowBtn.classList = "btn btn-outline-primary following-btn"
+        }
+        else {
+          targetUserFollowBtn.innerHTML = "Follow"
+          targetUserFollowBtn.classList = "btn btn-primary follow-btn"
+        }
+
+        targetUserFollowersCount.textContent = data.followers
+      })
+      .catch(error => {
+        console.error('Error:', error)
+      })
+  })
+})
+
+
 // Like
 const likeForms = document.querySelectorAll('.like-form')
 
