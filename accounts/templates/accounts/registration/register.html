@@ -6,8 +6,8 @@ Registration
 {% endblock title %}
 
 {% block content %}
-<div class="form-container">
-    <h1>Registration</h1>
+<div class="form-container-sm">
+    <h1 class="mb-4">Registration</h1>
     <form method="post">
         {% csrf_token %}
         {{profile_form | crispy}}
