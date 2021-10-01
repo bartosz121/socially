@@ -129,6 +129,14 @@ a, a:hover, a:focus, a:active {
         }
     }
 
+    &-picture {
+        img {
+            width: 600px;
+            height: 400px;
+            object-fit: scale-down;
+        }
+    }
+
     &-bottom {
         .post-stats {
             .stat {
