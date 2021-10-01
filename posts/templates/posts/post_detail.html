@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block title %}
 {{post.author_username}}: {{post.body}}
@@ -139,6 +140,16 @@
                     </div>
                 </div>
             </div>
+            {% if request.user.is_authenticated %}
+            <hr>
+                <div class="reply-container">
+                    <div class="reply-body">
+                        <form method="POST" enctype="multipart/form-data">
+                            {% crispy reply_form %}
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </div>
     {% if post.comment_count > 0 %}
