@@ -113,6 +113,8 @@ a, a:hover, a:focus, a:active {
     }
 
     &-body {
+        overflow-wrap: break-word;
+
         &-detail{
             font-size: 1.5rem;
         }
