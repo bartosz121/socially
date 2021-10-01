@@ -4,12 +4,13 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views import View
-from django.views.generic import DetailView, UpdateView
+from django.views.generic import UpdateView
 from django.views.decorators.http import require_http_methods
 from .models import Post
-from .forms import PostForm
+from .forms import PostForm, ReplyForm
 
 # Create your views here.
 
@@ -44,14 +45,39 @@ class HomeView(View):
         return render(request, self.template_name, self.get_context_data())
 
 
-class PostDetailView(DetailView):
-    model = Post
+class PostDetailView(View):
+    http_method_names = ["get", "post"]
     template_name = "posts/post_detail.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["comments"] = Post.objects.filter(parent=context["post"])
-        return context
+    def get_context_data(self, *args, **kwargs):
+        pk = self.kwargs["pk"]
+        parent_post = get_object_or_404(Post, pk=pk)
+        kwargs["post"] = parent_post
+        kwargs["comments"] = Post.objects.filter(parent=parent_post)
+        if "reply_form" not in kwargs:
+            kwargs["reply_form"] = ReplyForm()
+        return kwargs
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, self.get_context_data())
+
+    def post(self, request, pk, *args, **kwargs):
+        context = {}
+        reply_form = ReplyForm(request.POST, request.FILES)
+        reply_form.is_valid()
+        if reply_form.is_valid():
+            reply_form.instance.author = request.user.profile
+            reply_form.instance.parent = get_object_or_404(Post, pk=pk)
+            reply_form.save()
+            messages.success(request, "Reply posted!")
+            return redirect(reverse("posts:post-detail", kwargs={"pk": pk}))
+        else:
+            messages.error(request, "Something went wrong...")
+            context["reply_form"] = reply_form
+
+        return render(
+            request, self.template_name, self.get_context_data(**context)
+        )
 
 
 class PostUpdateView(UpdateView):
