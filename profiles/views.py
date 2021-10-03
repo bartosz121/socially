@@ -5,12 +5,13 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic.detail import DetailView
 from accounts.models import CustomUser
+from posts.helpers import PaginableView
 from .models import Profile
 
 # Create your views here.
 
 
-class ProfileDetailView(DetailView):
+class ProfileDetailView(DetailView, PaginableView):
     model = Profile
     template_name = "profiles/detail.html"
     slug_field = "username"
@@ -18,7 +19,8 @@ class ProfileDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["posts"] = context["profile"].get_posts()
+        user_posts = context["profile"].get_posts()
+        context["posts"] = self.get_paginator_page(user_posts, 5)
         return context
 
 
