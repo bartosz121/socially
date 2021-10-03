@@ -1,10 +1,7 @@
-from unittest.case import expectedFailure
 from django.test import TestCase
-from django.test.testcases import _AssertNumQueriesContext
-
+from posts.tests.factories import PostFactory
 from profiles.models import Profile
-from posts.models import Post
-from accounts.models import CustomUser
+from profiles.tests.factories import ProfileFactory, SuperUserProfileFactory
 
 
 class ProfileModelTest(TestCase):
@@ -12,44 +9,38 @@ class ProfileModelTest(TestCase):
     def setUpTestData(cls):
         # Create user with profile
         # following 2 other users, 3 followers and 2 posts
-        user = CustomUser._default_manager.create_user_with_profile(
-            email="profileModelTest@email.com", password="Password123!@#"
-        )
-        cls.profile = user.profile
+        cls.profile = ProfileFactory()
 
         # Dummy users
-        dummy1 = CustomUser._default_manager.create_user_with_profile(
-            email="dummy1@email.com", password="Password123!@#"
-        )
-        dummy2 = CustomUser._default_manager.create_user_with_profile(
-            email="dummy2@email.com", password="Password123!@#"
-        )
-        dummy3 = CustomUser._default_manager.create_user_with_profile(
-            email="dummy3@email.com", password="Password123!@#"
+        dummy1 = SuperUserProfileFactory()
+        dummy2 = ProfileFactory()
+        dummy3 = ProfileFactory()
+        cls.dummy_users = (
+            dummy1.user,
+            dummy2.user,
+            dummy3.user,
         )
 
         # Add followers
-        dummy1.profile.following.add(user)
-        dummy2.profile.following.add(user)
-        dummy3.profile.following.add(user)
+        dummy1.following.add(cls.profile.user)
+        dummy2.following.add(cls.profile.user)
+        dummy3.following.add(cls.profile.user)
         cls.followers = [
-            dummy1.profile,
-            dummy2.profile,
-            dummy3.profile,
+            dummy1,
+            dummy2,
+            dummy3,
         ]
 
         # Test User follows 2 dummy users
-        cls.profile.following.add(dummy1)
-        cls.profile.following.add(dummy2)
+        cls.profile.following.add(dummy1.user)
+        cls.profile.following.add(dummy2.user)
         cls.following = [
-            dummy1,
-            dummy2,
+            dummy1.user,
+            dummy2.user,
         ]
 
         # Create Posts
-        post1 = Post.objects.create(author=cls.profile, body="Post 1 body")
-        post2 = Post.objects.create(author=cls.profile, body="Post 2 body")
-        cls.posts = [post1, post2]
+        cls.posts = tuple(PostFactory(author=cls.profile) for _ in range(4))
 
     def test_object_name(self):
         expected_object_name = (
@@ -73,21 +64,46 @@ class ProfileModelTest(TestCase):
             self.profile.followers_count, expected_followers_count
         )
 
-    # TODO test get absolute url here
-
     def test_get_posts(self):
         expected_posts = self.posts
-        expected_posts.reverse()  # order '-created'
-        self.assertEqual(list(self.profile.get_posts()), expected_posts)
+        self.assertEqual(set(self.profile.get_posts()), set(expected_posts))
 
     def test_get_user_follow_status(self):
-        # brand new dummy to test not following
-        not_following_user = (
-            CustomUser._default_manager.create_user_with_profile(
-                email="notFollowing@email.com", password="Password123!@#"
-            )
-        )
+        not_following_user = ProfileFactory().user
         self.assertTrue(self.profile.get_user_follow_status(self.following[0]))
         self.assertFalse(
             self.profile.get_user_follow_status(not_following_user)
         )
+
+    def test_get_following_users_posts(self):
+        expected_following_posts = []
+        for following in self.following:
+            post = PostFactory(author=following.profile)
+            expected_following_posts.append(post)
+
+        self.assertEqual(
+            set(self.profile.get_following_users_posts()),
+            set(expected_following_posts),
+        )
+
+    def test_get_follow_suggestions(self):
+        # Get difference from all dummy users and following
+        # and because get_following_suggestions() return Profile type list
+        # get 'Profile' instead of 'CustomUser'
+        expected_suggestions = [
+            dummy.profile
+            for dummy in set(self.dummy_users).difference(set(self.following))
+        ]
+
+        self.assertEqual(
+            self.profile.get_follow_suggestions(), expected_suggestions
+        )
+
+    def test_get_follow_suggestions_with_more_users(self):
+        """Test if `get_follow_suggestions` method will return
+        3 elements if there are more users in db"""
+
+        for _ in range(5):
+            ProfileFactory()
+
+        self.assertEqual(len(self.profile.get_follow_suggestions()), 3)
