@@ -16,6 +16,10 @@
       {% endfor %}
   </div>
 
+  {% if posts.paginator.num_pages > 1 %}
+    {% include 'posts/pagination.html' with page_obj=posts %}
+  {% endif %}
+
 {% endblock content %}
 
 {% block scripts %}
