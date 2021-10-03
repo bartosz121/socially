@@ -16,6 +16,8 @@ crispy-bootstrap5 = "^0.5"
 django-compressor = "^2.4.1"
 django-libsass = "^0.9"
 coverage = "^5.5"
+factory-boy = "^3.2.0"
+Faker = "^8.14.1"
 
 [tool.poetry.dev-dependencies]
 black = {version = "^21.8b0", allow-prereleases = true}
