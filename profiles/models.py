@@ -95,9 +95,10 @@ class Profile(models.Model):
         return followers
 
     # TODO make this more 'smart'
+    # check for following in 'this' user following users
     def get_follow_suggestions(self):
         profiles = Profile.objects.all().exclude(user=self.user)
-        following = [profile for profile in self.get_following_profiles()]
+        following = [*self.get_following_profiles()]
         profiles = list(
             filter(lambda profile: profile not in following, profiles)
         )
