@@ -1,13 +1,30 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block title %}Home{% endblock title %}
 
 {% block content %}
   {% if user.is_authenticated %}
-    {% include 'post_form.html' %}
+    {% include 'posts/post_form.html' %}
   {% endif %}
 
-  {% include 'posts.html' %}
+  <div class="posts">
+      <input type="hidden" id="csrfToken" name="csrfmiddlewaretoken" value={{ csrf_token }}>
+      {% for post in posts %}
+          {% include 'posts/post.html' %}
+      {% endfor %}
+  </div>
+
+  {% if posts.paginator.num_pages > 1 %}
+    {% include 'posts/pagination.html' with page_obj=posts %}
+  {% endif %}
 
 {% endblock content %}
+
+{% block scripts %}
+    <script type="module" src={% static 'postsScript.js' %} defer></script>
+    {% if user.is_authenticated %}
+        <script type="module" src={% static 'postsScriptLoggedIn.js' %} defer></script>
+    {% endif %}
+{% endblock scripts %}

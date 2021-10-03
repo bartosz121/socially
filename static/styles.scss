@@ -14,6 +14,11 @@ body {
     font-family: 'Poppins', sans-serif;
 }
 
+a, a:hover, a:focus, a:active {
+    text-decoration: none;
+    color: inherit;
+}
+
 .navbar {
     &-icon {
         height: 25px;
@@ -91,6 +96,15 @@ body {
     &-head {
         display: flex;
         flex-direction: row;
+
+        .post-dots {
+            font-size: 1.3rem;
+            cursor: pointer;
+
+            &:hover {
+                color: black !important;
+            }
+        }
     }
 
     &-time {
@@ -98,70 +112,119 @@ body {
         flex-direction: column;
     }
 
-    &-actions {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
+    &-body {
+        overflow-wrap: break-word;
 
-        .liked {
-            @include hotpink-color-with-drop-shadow;
+        &-detail{
+            font-size: 1.5rem;
         }
 
-        .action {
+        .post-parent {
+            .parent-info {
+                cursor: pointer;
+                &:hover {
+                    color: $bootstrapBlue !important;
+                }
+            }
+        }
+    }
+
+    &-picture {
+        img {
+            width: 600px;
+            height: 400px;
+            object-fit: scale-down;
+        }
+    }
+
+    &-bottom {
+        .post-stats {
+            .stat {
+                display: inline-block;
+                max-width: max-content;
+                font-size: 1.2rem;
+                line-height: 18px;
+                border-bottom: 1px solid transparent;
+                cursor: pointer;
+
+                &:hover {
+                    border-bottom-color: black;
+                }
+            }
+        }
+
+        .post-actions {
             display: flex;
             flex-direction: row;
             align-items: center;
-            justify-content: center;
-            transition: 0.2s ease;
-            flex-grow: 1;
-            cursor: pointer;
-            margin: 0 10px;
+            justify-content: space-between;
 
-            &-btn {
-                background-color: transparent;
-                border: none;
+            .liked {
+                @include hotpink-color-with-drop-shadow;
             }
 
-            &-btn:focus {
-                outline: none;
-                box-shadow: none;
-            }
+            .action {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                transition: 0.2s ease;
+                flex-grow: 1;
+                cursor: pointer;
+                margin: 0 10px;
 
-            .icon {
-                font-size: 1.5rem;
-            }
+                &-btn {
+                    background-color: transparent;
+                    border: none;
+                }
 
-            .count {
-                margin: 0 15px;
-            }
+                &-btn:focus {
+                    outline: none;
+                    box-shadow: none;
+                }
 
-            &-chat {
-                &:hover {
-                    color: $bootstrapBlue;
+                .icon {
+                    font-size: 1.5rem;
+                }
+
+                .count {
+                    margin: 0 15px;
+                }
+
+                &-chat {
+                    &:hover {
+                        color: $bootstrapBlue;
+                    }
+                }
+
+                &-like {
+                    &:hover {
+                        @include hotpink-color-with-drop-shadow;
+                    }
+                }
+
+                &-share {
+                    &:hover {
+                        color: $bootstrapBlue;
+                    }
                 }
             }
 
-            &-like {
-                &:hover {
-                    @include hotpink-color-with-drop-shadow;
-                }
-            }
-
-            &-share {
-                &:hover {
-                    color: $bootstrapBlue;
-                }
-            }
         }
-
     }
 }
 
 .form {
     &-container {
-        max-width: 576px;
-        margin: auto;
+        &-sm {
+            max-width: 576px;
+            margin: auto;
+        }
+
+        &-md {
+            max-width: 768px;
+            margin: auto;
+        }
     }
 }
 

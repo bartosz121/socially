@@ -44,3 +44,18 @@ class PostForm(ModelForm):
         fields = ["body", "picture"]
         exclude = ["parent", "author", "liked", "created", "updated"]
         labels = {"body": "", "picture": ""}
+
+
+class ReplyForm(PostForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["body"].widget.attrs.update({"placeholder": "Reply..."})
+        # TODO this is the only way i can get into 'Submit' btn in Layout
+        # self.helper["submit_post"] and self.helper.filter(Submit) wont work
+        self.helper.layout[0][1][0][0][1][0][0].value = "Reply"
+
+    class Meta:
+        model = Post
+        fields = ["parent", "body", "picture"]
+        exclude = ["author", "liked", "created", "updated"]
+        labels = {"body": "", "picture": ""}

@@ -10,6 +10,7 @@
             <img class="w-100 rounded-3 modal-img" src={{ profile.profile_background.url }} alt="Profile background"/>
         </div>
         <div class="profile-header rounded-3">
+            <input type="hidden" id="csrfToken" name="csrfmiddlewaretoken" value={{ csrf_token }}>
             <img class="img-thumbnail modal-img" src={{ profile.profile_picture.url }} alt="" srcset="">
             <p class="display-6 profile-header-username">{{ profile.username }}</p>
             <div class="follow-info">
@@ -36,7 +37,6 @@
                             {% endif %}
                         {% endif %}
                     {% else %}
-                        <input type="hidden" name="user-not-authenticated">
                         <button type="submit" class="btn btn-primary follow-btn" id="follow-btn-{{ profile.user.pk }}">
                             <span>Follow</span>
                         </button>
@@ -46,7 +46,14 @@
         </div>
         <div class="profile-body">
             {% if profile.posts_count > 0 %}
-                {% include 'posts.html' %}
+                <div class="posts">
+                    {% for post in posts %}
+                        {% include 'posts/post.html' %}
+                    {% endfor %}
+                </div>
+                {% if posts.paginator.num_pages > 1 %}
+                    {% include 'posts/pagination.html' with page_obj=posts %}
+                {% endif %}
             {% else %}
             <div class="no-posts-msg mt-4">
                 <h4>No posts yet!</h4>
@@ -55,3 +62,10 @@
         </div>
     </div>
 {% endblock content %}
+
+{% block scripts %}
+    <script type="module" src={% static 'postsScript.js' %} defer></script>
+    {% if user.is_authenticated %}
+        <script type="module" src={% static 'postsScriptLoggedIn.js' %} defer></script>
+    {% endif %}
+{% endblock scripts %}
