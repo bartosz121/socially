@@ -71,7 +71,7 @@ class Profile(models.Model):
         """Is 'this' user following given user"""
         return target_user.profile in self.get_following_profiles()
 
-    def get_following_profiles_users_posts(self):
+    def get_following_users_posts(self):
         # for user in self.get_following_profiles():
         #     posts.append(Post.objects.filter(author=user))
         # if len(posts) > 0:
