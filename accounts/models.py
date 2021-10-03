@@ -11,15 +11,24 @@ class CustomUserManager(BaseUserManager):
     instead of username
     """
 
-    def create_user(self, email, password, superuser=False, **fields):
+    def create_user(self, email, password, create_profile=False, **fields):
+        def get_random_username():
+            return str(uuid.uuid4()).split("-")[0]
+
         if not email:
             raise ValueError("The Email must be set")
         email = self.normalize_email(email)
         user = self.model(email=email, **fields)
         user.set_password(password)
         user.save()
-        if superuser:
-            Profile(user=user, username=str(uuid.uuid4()).split("-")[0]).save()
+        if create_profile:
+            while True:
+                random_username = get_random_username()
+                if Profile.objects.filter(username=random_username).exists():
+                    continue
+                else:
+                    Profile(user=user, username=random_username).save()
+                    break
         return user
 
     def create_superuser(self, email, password, **fields):
@@ -32,7 +41,7 @@ class CustomUserManager(BaseUserManager):
         if fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have 'is_superuser' set to True")
 
-        return self.create_user(email, password, superuser=True, **fields)
+        return self.create_user(email, password, create_profile=True, **fields)
 
 
 class CustomUser(AbstractUser):
