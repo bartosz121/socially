@@ -19,6 +19,14 @@ a, a:hover, a:focus, a:active {
     color: inherit;
 }
 
+.pointer-hover-underline {
+    cursor: pointer;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
 .navbar {
     &-icon {
         height: 25px;
@@ -241,7 +249,8 @@ a, a:hover, a:focus, a:active {
 }
 
 .follow-btn-wrapper {
-    button {
+
+    .follow-btn {
         width: 100px;
     }
 
