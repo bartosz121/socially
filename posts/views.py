@@ -2,12 +2,14 @@ from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Count, Subquery
 from django.http import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.views import View
 from django.views.generic import UpdateView
 from django.views.decorators.http import require_http_methods
+from profiles.models import Profile
 from .models import Post
 from .forms import PostForm, ReplyForm
 from .helpers import PaginableView
@@ -19,8 +21,22 @@ class HomeView(PaginableView):
     template_name = "posts/main.html"
 
     def get_context_data(self, **kwargs):
+        user = self.request.user
         qs = Post.objects.all().order_by("-created")
         kwargs["posts"] = self.get_paginator_page(qs, 5)
+        kwargs["most_replies_posts"] = sorted(
+            Post.objects.all(), key=lambda x: x.comment_count, reverse=True
+        )[:7]
+
+        if user.is_authenticated:
+            kwargs[
+                "follow_suggestions"
+            ] = user.profile.get_follow_suggestions()
+        else:
+            # TODO get 'popular' accounts
+            # for now get random
+            kwargs["follow_suggestions"] = Profile.objects.order_by("?")[:5]
+
         if "form" not in kwargs:
             kwargs["form"] = PostForm()
         return kwargs
@@ -115,9 +131,9 @@ def delete_post(request, pk):
 
 
 class HandleLike(LoginRequiredMixin, View):
-    def post(self, request, pk, *args, **kwargs):
+    def post(self, request, post_pk, *args, **kwargs):
         # TODO user can delete post and it will still be visible meanwhile user likes -> this throws error
-        post = Post.objects.get(pk=pk)
+        post = Post.objects.get(pk=post_pk)
         response = {}
 
         if not post.get_user_liked(request.user):
@@ -131,8 +147,8 @@ class HandleLike(LoginRequiredMixin, View):
 
         return JsonResponse(response, safe=False)
 
-    def get(self, request, pk, *args, **kwargs):
-        post = Post.objects.filter(id=pk)
+    def get(self, request, post_pk, *args, **kwargs):
+        post = Post.objects.filter(id=post_pk)
         if not post:
             return redirect("posts:home-view")
         return redirect(

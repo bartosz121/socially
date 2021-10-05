@@ -16,5 +16,5 @@ urlpatterns = [
         "posts/update/<int:pk>", PostUpdateView.as_view(), name="post-update"
     ),
     path("posts/delete/<int:pk>", delete_post, name="post-delete"),
-    path("handlelike/<int:pk>", HandleLike.as_view(), name="handle-like"),
+    path("handlelike/<int:post_pk>", HandleLike.as_view(), name="handle-like"),
 ]
