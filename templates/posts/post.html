@@ -7,17 +7,16 @@
         </div>
         <div class="post-info ms-2">
             <div class="post-author-username">
-                <a href="{{ post.author.get_absolute_url }}">{{ post.author.username }}</a>
+                <a href="{{ post.author.get_absolute_url }}"><span class="pointer-hover-underline">{{ post.author.username }}</span></a>
             </div>
             <div class="post-time text-muted">
                 {% if post.updated != post.created %}
-                <abbr title="Created: {{ post.created|date:'Y/m/d g:i a'}}">
-                    <small class='updated'/>
-                        {{ post.updated|date:'Y/m/d g:i a'}}<i class="bi bi-pencil ms-2"></i>
+                    <small class="updated" title="Created: {{ post.created|date:'Y/m/d g:i a'}} | Updated: {{ post.updated|date:'Y/m/d g:i a'}}"/>
+                        {{ post.updated|timesince }} ago<i class="bi bi-pencil ms-2"></i>
                     </small>
                 </abbr>
                 {% else %}
-                    <small class='created'/>{{ post.created|date:'Y/m/d g:i a'}}</small>
+                    <small class='created' title="{{ post.created|date:'Y/m/d g:i a'}}"/>{{ post.created|timesince }} ago</small>
                 {% endif %}
             </div>
         </div>
