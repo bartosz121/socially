@@ -23,16 +23,19 @@ followForms.forEach(form => {
         return response.json()
       })
       .then(data => {
+        targetUserFollowBtn.classList.toggle("btn-primary")
+        targetUserFollowBtn.classList.toggle("btn-outline-primary")
+        targetUserFollowBtn.classList.toggle("following-btn")
         if (data.value === 'follow') {
           targetUserFollowBtn.innerHTML = "<span>Following</span>"
-          targetUserFollowBtn.classList = "btn btn-outline-primary following-btn"
         }
         else {
           targetUserFollowBtn.innerHTML = "Follow"
-          targetUserFollowBtn.classList = "btn btn-primary follow-btn"
         }
 
-        targetUserFollowersCount.textContent = data.followers
+        if (targetUserFollowersCount !== null) {
+          targetUserFollowersCount.textContent = data.followers
+        }
       })
       .catch(error => {
         console.error('Error:', error)
