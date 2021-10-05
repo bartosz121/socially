@@ -25,9 +25,9 @@ class ProfileDetailView(DetailView, PaginableView):
 
 
 class HandleFollow(LoginRequiredMixin, View):
-    def post(self, request, pk, *args, **kwargs):
+    def post(self, request, profile_pk, *args, **kwargs):
         calling_user = CustomUser.objects.get(pk=request.user.pk)
-        target_user = CustomUser.objects.get(pk=pk)
+        target_user = CustomUser.objects.get(pk=profile_pk)
         response = {}
 
         if not calling_user.profile.get_user_follow_status(target_user):
@@ -41,8 +41,8 @@ class HandleFollow(LoginRequiredMixin, View):
 
         return JsonResponse(response, safe=False)
 
-    def get(self, pk, *args, **kwargs):
-        user = CustomUser.objects.filter(id=pk)
+    def get(self, request, profile_pk, *args, **kwargs):
+        user = CustomUser.objects.filter(id=profile_pk)
         if not user:
             return redirect("posts:home-view")
         return redirect(

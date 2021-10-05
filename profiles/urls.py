@@ -10,6 +10,8 @@ urlpatterns = [
         name="profile-detail",
     ),
     path(
-        "handlefollow/<int:pk>", HandleFollow.as_view(), name="handle-follow"
+        "handlefollow/<int:profile_pk>",
+        HandleFollow.as_view(),
+        name="handle-follow",
     ),
 ]
