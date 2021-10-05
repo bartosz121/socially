@@ -20,29 +20,7 @@
             <div class="profile-bio w-100 mt-2 text-muted">
                 <p>{{ profile.bio }}</p>
             </div>
-            <div class="follow-btn-wrapper">
-                <form action="{% url 'profiles:handle-follow' profile.user.pk %}" method="post" class="follow-form">
-                    {% csrf_token %}
-                    <input type="hidden" name="user-id" value="{{ profile.user.pk }}">
-                    {% if request.user.is_authenticated %}
-                        {% if request.user.profile != profile %}
-                            {% if profile in request.user.profile.get_following_profiles  %}
-                                <button type="submit" class="btn btn-outline-primary following-btn" id="follow-btn-{{ profile.user.pk }}">
-                                    <span>Following</span>
-                                </button>
-                            {% else %}
-                                <button type="submit" class="btn btn-primary follow-btn" id="follow-btn-{{ profile.user.pk }}">
-                                    <span>Follow</span>
-                                </button>
-                            {% endif %}
-                        {% endif %}
-                    {% else %}
-                        <button type="submit" class="btn btn-primary follow-btn" id="follow-btn-{{ profile.user.pk }}">
-                            <span>Follow</span>
-                        </button>
-                    {% endif %}
-                </form>
-            </div>
+            {% include 'follow_btn.html' with btn_class="btn btn-primary follow-btn" %}
         </div>
         <div class="profile-body">
             {% if profile.posts_count > 0 %}
