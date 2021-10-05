@@ -5,6 +5,52 @@
 {{ profile.username }}
 {% endblock title %}
 {% block content %}
+    <div class="modal fade" id="followingModal" tabindex="-1" aria-labelledby="followingModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="followingModalLabel">{{ profile.username }} is following</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% for following_profile in profile.get_following_profiles %}
+                    <a href="{{ following_profile.get_absolute_url }}">
+                        <div class="wrapper d-flex my-2">
+                            <img class="profile-picture-medium rounded" src={{ following_profile.profile_picture.url }} alt="Profile picture">
+                            <p class="pointer-hover-underline ms-2 mt-3">{{ following_profile.username }}</p>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="followersModal" tabindex="-1" aria-labelledby="followersModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="followersModalLabel">{{ profile.username }} followers</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% for follower in profile.get_followers %}
+                    <a href="{{ follower.get_absolute_url }}">
+                        <div class="wrapper d-flex my-2">
+                            <img class="profile-picture-medium rounded" src={{ follower.profile_picture.url }} alt="Profile picture">
+                            <p class="pointer-hover-underline ms-2 mt-3">{{ follower.username }}</p>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+            </div>
+        </div>
+    </div>
     <div class="profile-container">
         <div class="profile-background">
             <img class="w-100 rounded-3 modal-img" src={{ profile.profile_background.url }} alt="Profile background"/>
@@ -14,8 +60,8 @@
             <img class="img-thumbnail modal-img" src={{ profile.profile_picture.url }} alt="" srcset="">
             <p class="display-6 profile-header-username">{{ profile.username }}</p>
             <div class="follow-info">
-            <div class="following">{{ profile.following_count }} <small class="text-muted">Following</small></div>
-            <div class="followers"><span id="followers-count-{{ profile.user.pk }}">{{ profile.followers_count }}</span> <small class="text-muted">Followers</small></div>
+            <div class="following pointer-hover-underline" {% if profile.following_count > 0 %}data-bs-toggle="modal" data-bs-target="#followingModal"{% endif %}>{{ profile.following_count }} <small class="text-muted">Following</small></div>
+            <div class="followers pointer-hover-underline" {% if profile.followers_count > 0 %}data-bs-toggle="modal" data-bs-target="#followersModal"{% endif %}><span id="followers-count-{{ profile.user.pk }}">{{ profile.followers_count }}</span> <small class="text-muted">Followers</small></div>
             </div>
             <div class="profile-bio w-100 mt-2 text-muted">
                 <p>{{ profile.bio }}</p>
