@@ -9,7 +9,7 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="followingModalLabel">{{ profile.username }} is following</h5>
+                <h5 class="modal-title text-break text-wrap" id="followingModalLabel">{{ profile.username }} is following</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -17,7 +17,7 @@
                     <a href="{{ following_profile.get_absolute_url }}">
                         <div class="wrapper d-flex my-2">
                             <img class="profile-picture-medium rounded" src={{ following_profile.profile_picture.url }} alt="Profile picture">
-                            <p class="pointer-hover-underline ms-2 mt-3">{{ following_profile.username }}</p>
+                            <p class="pointer-hover-underline text-break ms-2 mt-3">{{ following_profile.username }}</p>
                         </div>
                     </a>
                 {% endfor %}
@@ -32,15 +32,15 @@
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="followersModalLabel">{{ profile.username }} followers</h5>
+                <h5 class="modal-title text-break text-wrap" id="followersModalLabel">{{ profile.username }} followers</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 {% for follower in profile.get_followers %}
                     <a href="{{ follower.get_absolute_url }}">
-                        <div class="wrapper d-flex my-2">
+                        <div class="modal-content-wrapper d-flex my-2">
                             <img class="profile-picture-medium rounded" src={{ follower.profile_picture.url }} alt="Profile picture">
-                            <p class="pointer-hover-underline ms-2 mt-3">{{ follower.username }}</p>
+                            <p class="pointer-hover-underline text-break ms-2 mt-3">{{ follower.username }}</p>
                         </div>
                     </a>
                 {% endfor %}
@@ -58,7 +58,7 @@
         <div class="profile-header rounded-3">
             <input type="hidden" id="csrfToken" name="csrfmiddlewaretoken" value={{ csrf_token }}>
             <img class="img-thumbnail modal-img" src={{ profile.profile_picture.url }} alt="" srcset="">
-            <p class="display-6 profile-header-username">{{ profile.username }}</p>
+            <p class="display-6 profile-header-username text-break text-center">{{ profile.username }}</p>
             <div class="follow-info">
             <div class="following pointer-hover-underline" {% if profile.following_count > 0 %}data-bs-toggle="modal" data-bs-target="#followingModal"{% endif %}>{{ profile.following_count }} <small class="text-muted">Following</small></div>
             <div class="followers pointer-hover-underline" {% if profile.followers_count > 0 %}data-bs-toggle="modal" data-bs-target="#followersModal"{% endif %}><span id="followers-count-{{ profile.user.pk }}">{{ profile.followers_count }}</span> <small class="text-muted">Followers</small></div>

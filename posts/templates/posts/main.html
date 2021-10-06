@@ -14,7 +14,7 @@
           <div class="pointer-hover-underline fw-bold text-wrap text-break">{{ post.body|truncatechars:20 }}</div>
         </a>
         <a href="{{ post.author.get_absolute_url }}">
-          <span class="pointer-hover-underline text-muted">by {{ post.author.username }}</span>
+          <span class="pointer-hover-underline text-muted text-break text-wrap">by {{ post.author.username }}</span>
         </a>
       </div>
       <span class="badge bg-primary rounded-pill" title="Replies">
@@ -64,8 +64,8 @@
                                 <img class="profile-picture-medium rounded" src={{ suggestion.profile_picture.url }} alt="Profile picture">
                             </a>
                         </div>
-                        <div class="follow-suggestion-info w-100 ms-2 d-flex flex-column justify-content-center align-items-center flex-wrap">
-                            <a href="{{ suggestion.get_absolute_url }}"><span class="pointer-hover-underline">{{ suggestion.username }}</span></a>
+                        <div class="follow-suggestion-info w-100 ms-2 text-center d-flex flex-column justify-content-center align-items-center flex-wrap">
+                            <a href="{{ suggestion.get_absolute_url }}"><span class="pointer-hover-underline text-break">{{ suggestion.username }}</span></a>
                             {% include 'follow_btn.html' with profile=suggestion btn_class="btn btn-primary btn-sm follow-btn" %}
                         </div>
                     </div>

@@ -7,7 +7,7 @@
         </div>
         <div class="post-info ms-2">
             <div class="post-author-username">
-                <a href="{{ post.author.get_absolute_url }}"><span class="pointer-hover-underline">{{ post.author.username }}</span></a>
+                <a href="{{ post.author.get_absolute_url }}"><span class="pointer-hover-underline text-break">{{ post.author.username }}</span></a>
             </div>
             <div class="post-time text-muted">
                 {% if post.updated != post.created %}
@@ -50,7 +50,7 @@
         {% if post.parent %}
             <div class="post-parent">
                 <a href="{{ post.parent.get_absolute_url }}">
-                    <small class="parent-info text-muted">Replying to {{ post.parent.author.username}}</small>
+                    <small class="parent-info text-muted text-break text-wrap">Replying to {{ post.parent.author.username}}</small>
                 </a>
             </div>
         {% endif %}

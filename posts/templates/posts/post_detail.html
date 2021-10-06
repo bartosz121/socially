@@ -17,7 +17,10 @@
             <div class="modal-body">
                 {% for like_user in post.get_liked %}
                     <a href="{{ like_user.profile.get_absolute_url }}">
-                        <p>{{ like_user.profile.username }}</p>
+                        <div class="wrapper d-flex my-2">
+                            <img class="profile-picture-medium rounded" src={{ like_user.profile.profile_picture.url }} alt="Profile picture">
+                            <p class="pointer-hover-underline ms-2 mt-3 text-break">{{ like_user.profile.username }}</p>
+                        </div>
                     </a>
                 {% endfor %}
             </div>
@@ -36,7 +39,7 @@
             </div>
             <div class="post-info ms-2">
                 <div class="post-author-username">
-                    <a href="{{ post.author.get_absolute_url }}"><span class="pointer-hover-underline">{{ post.author.username }}</span></a>
+                    <a href="{{ post.author.get_absolute_url }}"><span class="pointer-hover-underline text-break">{{ post.author.username }}</span></a>
                 </div>
                 <div class="post-time text-muted">
                     {% if post.updated != post.created %}
@@ -77,7 +80,7 @@
             {% if post.parent %}
                 <div class="post-parent">
                     <a href="{{ post.parent.get_absolute_url }}">
-                        <small class="parent-info text-muted">Replying to {{ post.parent.author.username}}</small>
+                        <small class="parent-info text-muted text-break text-wrap">Replying to {{ post.parent.author.username}}</small>
                     </a>
                 </div>
             {% endif %}
