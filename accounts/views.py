@@ -29,6 +29,8 @@ def register(request):
             user_form = CustomUserCreationForm(request.POST)
             profile_form = RegistrationProfileForm(request.POST)
     else:
+        if request.user.is_authenticated:
+            return redirect("posts:home-view")
         user_form = CustomUserCreationForm()
         profile_form = RegistrationProfileForm()
 
