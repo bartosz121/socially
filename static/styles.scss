@@ -10,6 +10,10 @@ $bootstrapRed: #dc3545;
     -moz-filter: drop-shadow(0px 0px 5px rgb(248, 41, 144));
 }
 
+html {
+    width: 100vw;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
 }
@@ -218,6 +222,26 @@ a, a:hover, a:focus, a:active {
                 }
             }
 
+        }
+    }
+}
+
+.search-item-stats {
+    margin-left: 5px;
+
+    .stat {
+        white-space: nowrap;
+    }
+
+    .likes-stat {
+        i {
+            color: hotpink;
+        }
+    }
+
+    .replies-stat, .followers-stat {
+        i {
+            color: $bootstrapBlue;
         }
     }
 }
