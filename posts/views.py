@@ -1,8 +1,8 @@
+from collections import defaultdict
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count, Subquery
 from django.http import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
@@ -11,10 +11,43 @@ from django.views.generic import UpdateView
 from django.views.decorators.http import require_http_methods
 from profiles.models import Profile
 from .models import Post
-from .forms import PostForm, ReplyForm
+from .forms import PostForm, ReplyForm, SearchForm
 from .helpers import PaginableView
 
 # Create your views here.
+
+
+class SearchView(PaginableView):
+    template_name = "posts/search.html"
+
+    def get(self, request, *args, **kwargs):
+        form = SearchForm()
+        query = None
+        results = defaultdict(list)
+        if "query" in request.GET:
+            form = SearchForm(request.GET)
+            if form.is_valid():
+                query = form.cleaned_data["query"]
+                results.update(
+                    posts=self.get_paginator_page(
+                        Post.objects.filter(body__search=query), 10
+                    )
+                )
+                results.update(
+                    profiles=Profile.objects.filter(username__icontains=query)[
+                        :5
+                    ]
+                )
+
+        return render(
+            request,
+            "posts/search.html",
+            {
+                "form": form,
+                "query": query,
+                "results": results,
+            },
+        )
 
 
 class HomeView(PaginableView):
@@ -27,6 +60,7 @@ class HomeView(PaginableView):
         kwargs["most_replies_posts"] = sorted(
             Post.objects.all(), key=lambda x: x.comment_count, reverse=True
         )[:7]
+        kwargs["search_form"] = SearchForm()
 
         if user.is_authenticated:
             kwargs[
