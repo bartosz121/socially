@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Search{% endblock title %}
+
+{% block content %}
+    <form method="GET">
+        {% crispy form %}
+    </form>
+    {% if query %}
+    <hr>
+    <div class="query-results-wrapper">
+        {% if results.profiles|length > 0 %}
+            <div class="profiles-result">
+                <h3>Profiles found:</h3>
+                {% for profile in results.profiles %}
+                    <a href="{{ profile.get_absolute_url }}">
+                        <div class="wrapper w-100 d-flex my-2">
+                            <img class="profile-picture-medium rounded" src={{ profile.profile_picture.url }} alt="Profile picture">
+                            <p class="pointer-hover-underline text-break ms-2 mt-3">{{ profile.username }}</p>
+                            <div class="search-item-stats pe-4 ms-auto align-self-center">
+                                <div class="stat followers-stat" title="Followers">
+                                    <i class="bi bi-person-fill"></i>
+                                    <span>{{ profile.followers_count }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <h4>Profiles not found</h4>
+        {% endif %}
+            <hr>
+        {% if results.posts|length > 0 %}
+            <div class="posts-result">
+                <h3>Posts found:</h3>
+                {% for post in results.posts %}
+                    <li class="search-post-item list-group-item d-flex justify-content-between align-items-start">
+                        <div class="ms-2 me-auto">
+                            <a href="{{ post.get_absolute_url }}">
+                                <div class="pointer-hover-underline fw-bold text-wrap text-break">{{ post.body|truncatechars:100 }}</div>
+                            </a>
+                            <a href="{{ post.author.get_absolute_url }}">
+                                <span class="pointer-hover-underline text-muted text-break text-wrap">by {{ post.author.username }}</span>
+                            </a>
+                        </div>
+                        <div class="search-item-stats">
+                            <div class="stat likes-stat" title="Likes">
+                                <i class="bi bi-heart-fill"></i>
+                                <span class="d-inline-block">
+                                {% if post.like_count > 99 %}
+                                    +99
+                                {% else %}
+                                    {{ post.like_count }}
+                                {% endif %}
+                                </span>
+                            </div>
+                            <div class="stat replies-stat" title="Replies">
+                                <i class="bi bi-chat-fill"></i>
+                                <span class="d-inline-block">
+                                {% if post.comment_count > 99 %}
+                                    +99
+                                {% else %}
+                                    {{ post.comment_count }}
+                                {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </div>
+
+            {% if results.posts.paginator.num_pages > 1 %}
+                {% include 'posts/pagination.html' with page_obj=results.posts query=query %}
+            {% endif %}
+        {% else %}
+            <h4>Posts not found</h4>
+        {% endif %}
+    </div>
+    {% endif %}
+{% endblock content %}
