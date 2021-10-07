@@ -2,7 +2,7 @@
   <ul class="pagination justify-content-center">
   {% if page_obj.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+      <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&query={{ query }}{% endif %}">Previous</a>
     </li>
   {% else %}
     <li class="page-item disabled">
@@ -11,7 +11,7 @@
   {% endif %}
 
   {% if page_obj.number|add:'-1' > 1 %}
-    <li class="page-item"><a class="page-link" href="?page={{ page_obj.number|add:'-2'}}">&hellip;</a></li>
+    <li class="page-item"><a class="page-link" href="?page={{ page_obj.number|add:'-2' }}{% if query %}&query={{ query }}{% endif %}">&hellip;</a></li>
   {% endif %}
 
   {% for i in page_obj.paginator.page_range %}
@@ -21,18 +21,18 @@
         <span class="page-link">{{ page_obj.number }}</span>
       </li>
     {% elif i > page_obj.number|add:'-2' and i < page_obj.number|add:'2' %}
-      <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+      <li class="page-item"><a class="page-link" href="?page={{ i }}{% if query %}&query={{ query }}{% endif %}">{{ i }}</a></li>
     {% endif %}
 
   {% endfor %}
 
   {% if page_obj.paginator.num_pages > page_obj.number|add:'1' %}
-    <li class="page-item"><a class="page-link"  href="?page={{ page_obj.number|add:'2' }}">&hellip;</a></li>
+    <li class="page-item"><a class="page-link"  href="?page={{ page_obj.number|add:'2' }}{% if query %}&query={{ query }}{% endif %}">&hellip;</a></li>
   {% endif %}
 
   {% if page_obj.has_next %}
     <li class="page-item">
-        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&query={{ query }}{% endif %}">Next</a>
     </li>
   {% else %}
     <li class="page-item disabled">
