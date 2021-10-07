@@ -18,11 +18,11 @@
         </a>
       </div>
       <span class="badge bg-primary rounded-pill" title="Replies">
-      {% if post.comment_count > 99 %}
-        +99
-      {% else %}
-        {{ post.comment_count }}
-      {% endif %}
+        {% if post.comment_count > 99 %}
+          +99
+        {% else %}
+          {{ post.comment_count }}
+        {% endif %}
       </span>
     </li>
   {% endfor %}
@@ -49,8 +49,9 @@
 
 {% block content-right %}
   <div class="search my-4">
-    <form class="d-flex">
-      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+    <form action="{% url 'posts:search' %}" method="GET" class="d-flex flex-column">
+      {{ search_form|crispy }}
+      <input class="btn btn-primary w-100" type="submit" value="Search">
     </form>
   </div>
   <div class="follow-suggestions my-4">
