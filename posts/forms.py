@@ -1,11 +1,38 @@
-from django.forms import ModelForm
+from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Div, Row, Column, Submit
 from crispy_forms.bootstrap import FormActions
 from .models import Post
 
 
-class PostForm(ModelForm):
+class SearchForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["query"].label = ""
+        self.fields["query"].widget.attrs.update(
+            {"placeholder": "Search for user or post"}
+        )
+        self.helper = FormHelper()
+        self.helper.disable_csrf = True
+        self.helper.layout = Layout(
+            Div(
+                Row("query"),
+                Row(
+                    FormActions(
+                        Submit(
+                            "search_btn",
+                            "Search",
+                            css_class="w-100",
+                        ),
+                    ),
+                ),
+            )
+        )
+
+    query = forms.CharField()
+
+
+class PostForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
