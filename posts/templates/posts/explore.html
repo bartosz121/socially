@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Explore{% endblock title %}
+
+{% block content %}
+    <h3 class="text-center">All posts</h3>
+    <div class="posts">
+        {% for post in posts %}
+            {% include 'posts/post.html' %}
+        {% endfor %}
+    </div>
+    {% if is_paginated %}
+        {% include 'posts/pagination.html' %}
+    {% endif %}
+{% endblock content %}
