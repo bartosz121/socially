@@ -1,8 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.messages.views import SuccessMessageMixin
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect
+from django.urls.base import reverse_lazy
 from django.views.generic import View
+from django.views.generic.edit import DeleteView
 from profiles.forms import RegistrationProfileForm, ProfileForm
 from .models import CustomUser
 from .forms import (
@@ -62,6 +67,7 @@ class SettingsView(View):
         return kwargs
 
     def get(self, request, *args, **kwargs):
+        self.user = self.request.user
         return render(request, self.template_name, self.get_context_data())
 
     def post(self, request, *args, **kwargs):
@@ -114,3 +120,14 @@ class SettingsView(View):
         return render(
             request, self.template_name, self.get_context_data(**context)
         )
+
+
+class DeleteUser(UserPassesTestMixin, SuccessMessageMixin, DeleteView):
+    model = CustomUser
+    success_url = reverse_lazy("posts:home-view")
+    success_message = "Account deleted"
+    template_name = "accounts/confirm_delete.html"
+
+    def test_func(self):
+        user_obj = self.get_object()
+        return user_obj == self.request.user

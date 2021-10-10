@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from .views import register, SettingsView
+from .views import register, SettingsView, DeleteUser
 
 app_name = "accounts"
 
@@ -22,4 +22,5 @@ urlpatterns = [
         ),
         name="logout",
     ),
+    path("delete_user/<int:pk>/", DeleteUser.as_view(), name="delete-user"),
 ]
