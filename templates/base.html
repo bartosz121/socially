@@ -35,15 +35,18 @@
                     <span class="navbar-toggler-icon"></span>
                 </div>
                 <div class="collapse navbar-collapse justify-content-md-center" id="navbarNavDropdown">
-                    <ul class="navbar-nav">
+                    <ul class="navbar-nav text-center">
+                        {% url 'posts:home-view' as url %}
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="{% url 'posts:home-view' %}">Home</a>
+                            <a class="nav-link{% if request.path == url %} active{% endif %}" aria-current="page" href="{{ url }}">Home</a>
                         </li>
+                        {% url 'posts:explore-view' as url %}
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Explore</a>
+                            <a class="nav-link{% if request.path == url %} active{% endif %}" href="{{ url }}">Explore</a>
                         </li>
+                        {% url 'posts:search' as url %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'posts:search' %}">Search</a>
+                            <a class="nav-link{% if request.path == url %} active{% endif %}" href="{{ url }}">Search</a>
                         </li>
                     </ul>
                 </div>
