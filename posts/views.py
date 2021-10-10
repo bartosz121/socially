@@ -2,7 +2,7 @@ from collections import defaultdict
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
@@ -135,17 +135,15 @@ class PostDetailView(PaginableView):
         )
 
 
-class PostUpdateView(UpdateView):
+class PostUpdateView(UserPassesTestMixin, UpdateView):
     model = Post
     template_name = "posts/post_update.html"
     fields = ["body", "picture"]
     exclude = ["parent", "author", "liked", "created", "updated"]
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if self.request.user.profile != context["post"].author:
-            raise PermissionDenied
-        return context
+    def test_func(self):
+        post = self.get_object()
+        return post.author.user == self.request.user
 
 
 @login_required
