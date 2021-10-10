@@ -54,26 +54,28 @@
       <input class="btn btn-primary w-100" type="submit" value="Search">
     </form>
   </div>
-  <div class="follow-suggestions my-4">
-    <h4>People you might know</h4>
-    <ul class="list-group">
-        {% for suggestion in follow_suggestions %}
-                <li class="follow-suggestion list-group-item d-flex flex-column">
-                    <div class="follow-suggestion-content w-100 d-flex align-items-center justify-content-center flex-wrap">
-                        <div class="follow-suggestion-img">
-                            <a href="{{ suggestion.get_absolute_url }}">
-                                <img class="profile-picture-medium rounded" src={{ suggestion.profile_picture.url }} alt="Profile picture">
-                            </a>
-                        </div>
-                        <div class="follow-suggestion-info w-100 ms-2 text-center d-flex flex-column justify-content-center align-items-center flex-wrap">
-                            <a href="{{ suggestion.get_absolute_url }}"><span class="pointer-hover-underline text-break">{{ suggestion.username }}</span></a>
-                            {% include 'follow_btn.html' with profile=suggestion btn_class="btn btn-primary btn-sm follow-btn" %}
-                        </div>
-                    </div>
-                </li>
-        {% endfor %}
-    </ul>
-  </div>
+  {% if follow_suggestions|length > 2 %}
+    <div class="follow-suggestions my-4">
+      <h4>People you might know</h4>
+      <ul class="list-group">
+          {% for suggestion in follow_suggestions %}
+                  <li class="follow-suggestion list-group-item d-flex flex-column">
+                      <div class="follow-suggestion-content w-100 d-flex align-items-center justify-content-center flex-wrap">
+                          <div class="follow-suggestion-img">
+                              <a href="{{ suggestion.get_absolute_url }}">
+                                  <img class="profile-picture-medium rounded" src={{ suggestion.profile_picture.url }} alt="Profile picture">
+                              </a>
+                          </div>
+                          <div class="follow-suggestion-info w-100 ms-2 text-center d-flex flex-column justify-content-center align-items-center flex-wrap">
+                              <a href="{{ suggestion.get_absolute_url }}"><span class="pointer-hover-underline text-break">{{ suggestion.username }}</span></a>
+                              {% include 'follow_btn.html' with profile=suggestion btn_class="btn btn-primary btn-sm follow-btn" %}
+                          </div>
+                      </div>
+                  </li>
+          {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
 {% endblock content-right %}
 
 {% block scripts %}
