@@ -92,7 +92,6 @@ likeForms.forEach(form => {
 
 // Delete post
 const deleteForms = document.querySelectorAll('.delete-post-form')
-// TODO GRAB CSRF TOKEN ONCE
 deleteForms.forEach(form => {
   form.addEventListener('submit', (e) => {
     e.preventDefault()
