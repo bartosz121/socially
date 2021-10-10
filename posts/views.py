@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.views import View
-from django.views.generic import UpdateView
+from django.views.generic import UpdateView, ListView
 from django.views.decorators.http import require_http_methods
 from profiles.models import Profile
 from .models import Post
@@ -186,3 +186,11 @@ class HandleLike(LoginRequiredMixin, View):
         return redirect(
             reverse("posts:post-detail", kwargs={"pk": post[0].pk})
         )
+
+
+class ExploreView(ListView, PaginableView):
+    model = Post
+    ordering = ["-created"]
+    template_name = "posts/explore.html"
+    context_object_name = "posts"
+    paginate_by = 10
