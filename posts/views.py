@@ -56,7 +56,7 @@ class HomeView(PaginableView):
     def get_context_data(self, **kwargs):
         user = self.request.user
         qs = Post.objects.all().order_by("-created")
-        kwargs["posts"] = self.get_paginator_page(qs, 5)
+        kwargs["posts"] = self.get_paginator_page(qs, 10)
         kwargs["most_replies_posts"] = sorted(
             Post.objects.all(), key=lambda x: x.comment_count, reverse=True
         )[:7]
