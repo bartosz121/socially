@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}404 Not Found{% endblock title %}
+
+{% block content %}
+<div class="http-error text-center">
+    <h1>404 Not found</h1>
+    <img src="{% static 'img/404.gif' %}" alt="404 not found image">
+    <p class="my-4">This page isn't available. Try searching for something else.</p>
+    <a class="btn btn-primary" role="button" href="{% url 'posts:home-view' %}">Go to home page</a>
+</div>
+{% endblock content %}
