@@ -31,26 +31,26 @@
     <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="{% url 'posts:home-view' %}"><img class="navbar-icon" src="{% static 'img/socially_icon.png'%}" alt="logo" />Socially</a>
+            <div class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </div>
+            <div class="collapse navbar-collapse justify-content-md-center" id="navbarNavDropdown">
+                <ul class="navbar-nav text-center">
+                    {% url 'posts:home-view' as url %}
+                    <li class="nav-item">
+                        <a class="nav-link{% if request.path == url %} active{% endif %}" aria-current="page" href="{{ url }}">Home</a>
+                    </li>
+                    {% url 'posts:explore-view' as url %}
+                    <li class="nav-item">
+                        <a class="nav-link{% if request.path == url %} active{% endif %}" href="{{ url }}">Explore</a>
+                    </li>
+                    {% url 'posts:search' as url %}
+                    <li class="nav-item">
+                        <a class="nav-link{% if request.path == url %} active{% endif %}" href="{{ url }}">Search</a>
+                    </li>
+                </ul>
+            </div>
             {% if user.is_authenticated %}
-                <div class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </div>
-                <div class="collapse navbar-collapse justify-content-md-center" id="navbarNavDropdown">
-                    <ul class="navbar-nav text-center">
-                        {% url 'posts:home-view' as url %}
-                        <li class="nav-item">
-                            <a class="nav-link{% if request.path == url %} active{% endif %}" aria-current="page" href="{{ url }}">Home</a>
-                        </li>
-                        {% url 'posts:explore-view' as url %}
-                        <li class="nav-item">
-                            <a class="nav-link{% if request.path == url %} active{% endif %}" href="{{ url }}">Explore</a>
-                        </li>
-                        {% url 'posts:search' as url %}
-                        <li class="nav-item">
-                            <a class="nav-link{% if request.path == url %} active{% endif %}" href="{{ url }}">Search</a>
-                        </li>
-                    </ul>
-                </div>
                 <div class="dropdown profile-dropdown">
                     <div class="btn btn-primary btn-lg dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <img class="profile-picture-small rounded" src="{{ user.profile.profile_picture.url }}" alt="Profile picture"/>
