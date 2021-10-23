@@ -11,8 +11,8 @@ Social media website built with Django, vanilla JS and PostgreSQL database
 
 ## TODO
 
-- [ ] Lazy loading
-- [ ] Infinite scroll
+- [ ] **Lazy loading (WIP)**
+- [ ] **Infinite scroll (WIP)**
 - [ ] Realtime updates (e.g. like count, new posts)
 - [ ] Notifications
 - [ ] Message/private chat system
