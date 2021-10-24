@@ -25,7 +25,6 @@ from .helpers import PaginableView
 
 
 def post_hx(request, pk):
-    # post = Post.objects.get(pk=pk)
     post = get_object_or_404(Post, pk=pk)
     return TemplateResponse(request, "posts/post.html", {"post": post})
 
@@ -82,7 +81,6 @@ def follow_suggestions_hx(request):
 
 
 # Standard views
-
 
 class SearchView(PaginableView):
     template_name = "posts/search.html"
