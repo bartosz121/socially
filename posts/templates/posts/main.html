@@ -5,30 +5,8 @@
 {% block title %}Home{% endblock title %}
 
 {% block content-left %}
-  {% if most_replies_posts|length > 0 %}
-    <ul class="list-group my-4">
-      <h4>Popular posts</h4>
-      {% for post in most_replies_posts %}
-        <li class="list-group-item d-flex justify-content-between align-items-start">
-          <div class="ms-2 me-auto">
-            <a href="{{ post.get_absolute_url }}">
-              <div class="pointer-hover-underline fw-bold text-wrap text-break">{{ post.body|truncatechars:20 }}</div>
-            </a>
-            <a href="{{ post.author.get_absolute_url }}">
-              <span class="pointer-hover-underline text-muted text-break text-wrap">by {{ post.author.username }}</span>
-            </a>
-          </div>
-          <span class="badge bg-primary rounded-pill" title="Replies">
-            {% if post.comment_count > 99 %}
-              +99
-            {% else %}
-              {{ post.comment_count }}
-            {% endif %}
-          </span>
-        </li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+  {% url 'posts:popular-posts-hx' as popular_posts_hx_url %}
+  {% include "htmx/lazy_load_htmx.html" with  get_url=popular_posts_hx_url %}
 {% endblock content-left %}
 
 {% block content %}
@@ -36,48 +14,19 @@
     {% include 'posts/post_form.html' %}
   {% endif %}
 
-  <div class="posts">
-      <input type="hidden" id="csrfToken" name="csrfmiddlewaretoken" value={{ csrf_token }}>
-      {% for post in posts %}
-          {% include 'posts/post.html' %}
-      {% endfor %}
-  </div>
-
-  {% if posts.paginator.num_pages > 1 %}
-    {% include 'posts/pagination.html' with page_obj=posts %}
-  {% endif %}
+  {% url 'posts:posts-hx' as posts_hx_url %}
+  {% include "htmx/lazy_load_htmx.html" with  get_url=posts_hx_url %}
 
 {% endblock content %}
 
 {% block content-right %}
-  <div class="search my-4">
-    <form action="{% url 'posts:search' %}" method="GET" class="d-flex flex-column">
-      {{ search_form|crispy }}
-      <input class="btn btn-primary w-100" type="submit" value="Search">
-    </form>
-  </div>
-  {% if follow_suggestions|length > 2 %}
-    <div class="follow-suggestions my-4">
-      <h4>People you might know</h4>
-      <ul class="list-group">
-          {% for suggestion in follow_suggestions %}
-                  <li class="follow-suggestion list-group-item d-flex flex-column">
-                      <div class="follow-suggestion-content w-100 d-flex align-items-center justify-content-center flex-wrap">
-                          <div class="follow-suggestion-img">
-                              <a href="{{ suggestion.get_absolute_url }}">
-                                  <img class="profile-picture-medium rounded" src={{ suggestion.profile_picture.url }} alt="Profile picture">
-                              </a>
-                          </div>
-                          <div class="follow-suggestion-info w-100 ms-2 text-center d-flex flex-column justify-content-center align-items-center flex-wrap">
-                              <a href="{{ suggestion.get_absolute_url }}"><span class="pointer-hover-underline text-break">{{ suggestion.username }}</span></a>
-                              {% include 'follow_btn.html' with profile=suggestion btn_class="btn btn-primary btn-sm follow-btn" %}
-                          </div>
-                      </div>
-                  </li>
-          {% endfor %}
-      </ul>
-    </div>
-  {% endif %}
+
+  {% url 'posts:search-form-hx' as search_form_hx_url %}
+  {% include "htmx/lazy_load_htmx.html" with  get_url=search_form_hx_url %}
+
+  {% url 'posts:follow-suggestions-hx' as follow_suggestions_hx_url %}
+  {% include "htmx/lazy_load_htmx.html" with  get_url=follow_suggestions_hx_url %}
+
 {% endblock content-right %}
 
 {% block scripts %}
