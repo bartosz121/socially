@@ -1,0 +1,8 @@
+{% load crispy_forms_tags %}
+
+<div class="search my-4">
+<form action="{% url 'posts:search' %}" method="GET" class="d-flex flex-column">
+    {{ search_form|crispy }}
+    <input class="btn btn-primary w-100" type="submit" value="Search">
+</form>
+</div>

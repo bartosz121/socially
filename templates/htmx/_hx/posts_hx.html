@@ -1,0 +1,14 @@
+<div class="posts">
+    <input type="hidden" id="csrfToken" name="csrfmiddlewaretoken" value={{ csrf_token }}>
+    {% for post in posts %}
+        {% include 'posts/post.html' %}
+    {% endfor %}
+
+    {% if posts.has_next %}
+        <div class="my-4" hx-get="{% url 'posts:posts-hx' %}?page={{ posts.next_page_number }}" hx-trigger="revealed">
+            <div class="spinner-wrapper text-center">
+            <div class="spinner-border" role="status"></div>
+            </div>
+        </div>
+    {% endif %}
+</div>

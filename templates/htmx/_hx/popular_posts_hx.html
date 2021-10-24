@@ -1,0 +1,26 @@
+{% if most_replies_posts|length > 0 %}
+<ul class="list-group my-4">
+    <h4>Popular posts</h4>
+    {% for post in most_replies_posts %}
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+        <div class="ms-2 me-auto">
+        <a href="{{ post.get_absolute_url }}">
+            <div class="pointer-hover-underline fw-bold text-wrap text-break">{{ post.body|truncatechars:20 }}</div>
+        </a>
+        <a href="{{ post.author.get_absolute_url }}">
+            <span class="pointer-hover-underline text-muted text-break text-wrap">by {{ post.author.username }}</span>
+        </a>
+        </div>
+        <span class="badge bg-primary rounded-pill" title="Replies">
+        {% if post.comment_count > 99 %}
+            +99
+        {% else %}
+            {{ post.comment_count }}
+        {% endif %}
+        </span>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<div class=""></div>
+{% endif %}
