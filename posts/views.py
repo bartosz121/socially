@@ -1,11 +1,13 @@
 from collections import defaultdict
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
+from django.template.response import TemplateResponse
 from django.views import View
 from django.views.generic import UpdateView, ListView
 from django.views.decorators.http import require_http_methods
@@ -15,6 +17,71 @@ from .forms import PostForm, ReplyForm, SearchForm
 from .helpers import PaginableView
 
 # Create your views here.
+
+# HTMX views
+# Not sure if there is some name convention
+# for now im using the following:
+#   _hx - (GET only) get http fragment
+
+
+def post_hx(request, pk):
+    # post = Post.objects.get(pk=pk)
+    post = get_object_or_404(Post, pk=pk)
+    return TemplateResponse(request, "posts/post.html", {"post": post})
+
+
+def posts_hx(request):
+    qs = Post.objects.all().order_by("-created")
+    page = request.GET.get("page", 1)
+    paginator = Paginator(qs, 10)
+
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+
+    return TemplateResponse(
+        request, "htmx/_hx/posts_hx.html", {"posts": posts}
+    )
+
+
+def popular_posts_hx(request):
+    most_replies_posts = sorted(
+        Post.objects.all(), key=lambda x: x.comment_count, reverse=True
+    )[:7]
+
+    return TemplateResponse(
+        request,
+        "htmx/_hx/popular_posts_hx.html",
+        {"most_replies_posts": most_replies_posts},
+    )
+
+
+def search_form_hx(request):
+    search_form = SearchForm()
+    return TemplateResponse(
+        request, "htmx/_hx/search_form_hx.html", {"search_form": search_form}
+    )
+
+
+def follow_suggestions_hx(request):
+    if request.user.is_authenticated:
+        follow_suggestions = request.user.profile.get_follow_suggestions()
+    else:
+        # TODO get 'popular' accounts
+        # for now get random
+        follow_suggestions = Profile.objects.order_by("?")[:5]
+
+    return TemplateResponse(
+        request,
+        "htmx/_hx/follow_suggestions_hx.html",
+        {"follow_suggestions": follow_suggestions},
+    )
+
+
+# Standard views
 
 
 class SearchView(PaginableView):
@@ -54,23 +121,6 @@ class HomeView(PaginableView):
     template_name = "posts/main.html"
 
     def get_context_data(self, **kwargs):
-        user = self.request.user
-        qs = Post.objects.all().order_by("-created")
-        kwargs["posts"] = self.get_paginator_page(qs, 10)
-        kwargs["most_replies_posts"] = sorted(
-            Post.objects.all(), key=lambda x: x.comment_count, reverse=True
-        )[:7]
-        kwargs["search_form"] = SearchForm()
-
-        if user.is_authenticated:
-            kwargs[
-                "follow_suggestions"
-            ] = user.profile.get_follow_suggestions()
-        else:
-            # TODO get 'popular' accounts
-            # for now get random
-            kwargs["follow_suggestions"] = Profile.objects.order_by("?")[:5]
-
         if "form" not in kwargs:
             kwargs["form"] = PostForm()
         return kwargs
