@@ -7,11 +7,32 @@ from .views import (
     PostUpdateView,
     SearchView,
     delete_post,
+    # htmx
+    post_hx,
+    posts_hx,
+    popular_posts_hx,
+    search_form_hx,
+    follow_suggestions_hx,
 )
 
 app_name = "posts"
 
 urlpatterns = [
+    # HTMX
+    path("posts/post_hx/<int:pk>", post_hx, name="post-hx"),
+    path("posts/posts_hx/", posts_hx, name="posts-hx"),
+    path(
+        "posts/popular_posts_hx/",
+        popular_posts_hx,
+        name="popular-posts-hx",
+    ),
+    path("posts/search_form_hx/", search_form_hx, name="search-form-hx"),
+    path(
+        "posts/follow_suggestions_hx/",
+        follow_suggestions_hx,
+        name="follow-suggestions-hx",
+    ),
+    # Standard
     path("", HomeView.as_view(), name="home-view"),
     path("explore/", ExploreView.as_view(), name="explore-view"),
     path("search/", SearchView.as_view(), name="search"),
