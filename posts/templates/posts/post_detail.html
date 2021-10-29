@@ -58,18 +58,12 @@
                 <li><hr></li>
                 {% if request.user.profile == post.author %}
                     <li><a class="dropdown-item" href="{% url 'posts:post-update' post.pk %}"><i class="bi bi-pencil me-2"></i><span>Edit post</span></a></li>
-                    <form action="{% url 'posts:post-delete' post.pk %}?redirect=True" method="POST" class="delete-post-form">
-                        <input type="hidden" name="post-id" value="{{ post.pk }}">
-                        <li><button class="dropdown-item" type="submit"><i class="bi bi-trash me-2"></i><span>Delete post</span></button></li>
-                    </form>
+                    <li id="delete-btn-{{ post.pk }}"><a class="dropdown-item"><i class="bi bi-trash me-2"></i><span>Delete post</span></a></li>
                     <li><hr></li>
                 {% endif %}
                 {% if request.user.is_staff %}
                     <li><h4 class="dropdown-header"><i class="bi bi-tools me-2"></i>Admin panel<h4></li>
-                    <form action="{% url 'posts:post-delete' post.pk %}?redirect=True" method="POST" class="delete-post-form">
-                        <input type="hidden" name="post-id" value="{{ post.pk }}">
-                        <li><button class="dropdown-item" type="submit"><i class="bi bi-trash me-2"></i><span>Delete post</span></button></li>
-                    </form>
+                    <li id="delete-btn-staff-{{ post.pk }}"><a class="dropdown-item"><i class="bi bi-trash me-2"></i><span>Delete post</span></a></li>
                     <li><hr></li>
                 {% endif %}
                 <li><a class="dropdown-item disabled" href="#"><i class="bi bi-flag me-2"></i><span>Report post TODO</span></a></li>
@@ -87,7 +81,7 @@
             <p class="post-body-detail">{{ post.body }}</p>
         </div>
         {% if post.picture %}
-            <div class="post-picture">
+            <div class="post-picture" id="post-img-modal-{{ post.pk }}">
                 <img class="post-img modal-img img-thumbnail mx-auto d-block" src={{ post.picture.url }} alt="post picture" />
             </div>
         {% endif %}
@@ -102,7 +96,6 @@
             <hr>
             {% endif %}
             <div class="post-actions">
-                <input type="hidden" id="csrfToken" name="csrfmiddlewaretoken" value={{ csrf_token }}>
                 <div class="action action-chat">
                     <div class="icon">
                         <i class="bi bi-chat"></i>
@@ -113,33 +106,24 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="action like-wrapper">
-                <form action="{% url 'posts:handle-like' post.pk %}" method="post" class="like-form">
-                    <input type="hidden" name="post-id" value="{{ post.pk }}">
-                    <button class="action-btn" type="submit">
-                        <div class="action action-like {% if user in post.get_liked %}liked{% endif %}" id="like-container-post-{{ post.pk }}">
-                            <div class="icon">
-                            <!-- TODO two identical ifs -->
-                                {% if user in post.get_liked %}
-                                    <i id="like-icon-{{ post.pk }}" class="bi bi-heart-fill"></i>
-                                {% else %}
-                                    <i id="like-icon-{{ post.pk }}" class="bi bi-heart"></i>
-                                {% endif %}
-                            </div>
+            <div class="action like-wrapper">
+                <button id="like-btn-{{ post.pk }}" class="action-btn" type="submit">
+                    <div class="action action-like {% if user in post.get_liked %}liked{% endif %}" id="like-container-post-{{ post.pk }}">
+                        <div class="icon">
+                            <i id="like-icon-{{ post.pk }}" class="bi {% if user in post.get_liked %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
                         </div>
-                    </button>
-                </form>
-                </div>
-                <div class="action action-share">
-                    <div class="icon">
-                        <i class="bi bi-box-arrow-up"  type="button" id="postShareDropdown" data-bs-toggle="dropdown" aria-expanded="false"></i>
-                        <ul class="dropdown-menu post-share-menu" aria-labelledby="postShareDropdown">
-                            <input type="hidden" name="post-url" value="{{ post.get_absolute_url }}">
-                            <li data-toggle="popover" title="Copied!"><a class="dropdown-item copyUrl"><i class="bi bi-link-45deg me-2"></i><span>Copy post URL</span></a></li>
-                            <li><a class="dropdown-item disabled"><i class="bi bi-envelope me-2"></i><span>Send via message TODO</span></a></li>
-                        </ul>
                     </div>
+                </button>
+            </div>
+            <div class="action action-share">
+                <div class="icon" id="icon-arrow-{{ post.pk }}">
+                    <i class="bi bi-box-arrow-up"  type="button" id="postShareDropdown{{ post.pk }}" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                    <ul class="dropdown-menu post-share-menu" aria-labelledby="postShareDropdown{{ post.pk }}">
+                        <li id="copyUrl-{{ post.pk }}"><a class="dropdown-item"><i class="bi bi-link-45deg me-2"></i><span>Copy post URL</span></a></li>
+                        <li><a class="dropdown-item disabled"><i class="bi bi-envelope me-2"></i><span>Send via message TODO</span></a></li>
+                    </ul>
                 </div>
+            </div>
             </div>
             {% if request.user.is_authenticated %}
             <hr>
@@ -175,8 +159,33 @@
 {% endblock content %}
 
 {% block scripts %}
-    <script type="module" src={% static 'postsScript.js' %} defer></script>
-    {% if user.is_authenticated %}
-        <script type="module" src={% static 'postsScriptLoggedIn.js' %} defer></script>
-    {% endif %}
+    <script>
+        document.getElementById('like-btn-{{ post.pk }}').addEventListener('click', () => {
+            likePost({{ post.pk }})
+        })
+
+        document.getElementById('copyUrl-{{ post.pk }}').addEventListener('click', () => {
+            copyUrlPost({{ post.pk }})
+        })
+
+        {% if post.picture %}
+            document.getElementById('post-img-modal-{{ post.pk }}').addEventListener('click', () => {
+                const imgUrl = '{{ post.picture.url }}'
+                imageModal(imgUrl)
+            })
+        {% endif %}
+
+        {% if request.user.profile == post.author %}
+            document.getElementById('delete-btn-{{ post.pk }}').addEventListener('click', () => {
+                deletePost({{ post.pk }}, true)
+            })
+        {% endif %}
+
+        {% if request.user.is_staff %}
+            document.getElementById('delete-btn-staff-{{ post.pk }}').addEventListener('click', () => {
+                deletePost({{ post.pk }}, true)
+            })
+        {% endif %}
+
+    </script>
 {% endblock scripts %}
