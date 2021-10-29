@@ -1,7 +1,4 @@
 <div class="follow-btn-wrapper">
-    <form action="{% url 'profiles:handle-follow' profile_pk=profile.user.pk %}" method="post" class="follow-form">
-        {% csrf_token %}
-        <input type="hidden" name="user-id" value="{{ profile.user.pk }}">
         {% if request.user.is_authenticated %}
             {% if request.user.profile != profile %}
                 {% if profile in request.user.profile.get_following_profiles  %}
@@ -19,5 +16,9 @@
                 <span>Follow</span>
             </button>
         {% endif %}
-    </form>
+        <script>
+            document.getElementById('follow-btn-{{ profile.user.pk }}').addEventListener('click', () => {
+                followUser({{ profile.user.pk }})
+            })
+        </script>
 </div>
