@@ -39,12 +39,52 @@ const getCookie = (name) => {
   return cookieValue;
 }
 
+const followUser = (userId) => {
+  let targetUserFollowersCount = document.getElementById(`followers-count-${userId}`)
+  let targetUserFollowBtn = document.getElementById(`follow-btn-${userId}`);
+
+  fetch(buildAbsoluteUrl(`/profiles/handlefollow/${userId}`), {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {
+      'X-CSRFToken': `${getCookie('csrftoken')}`
+    }
+  })
+    .then((response) => {
+      if (response.redirected) {
+        window.location.replace(response.url)
+      }
+      return response.json()
+    })
+    .then(data => {
+      targetUserFollowBtn.classList.toggle("btn-primary")
+      targetUserFollowBtn.classList.toggle("btn-outline-primary")
+      targetUserFollowBtn.classList.toggle("following-btn")
+      if (data.value === 'follow') {
+        targetUserFollowBtn.innerHTML = "<span>Following</span>"
+      }
+      else {
+        targetUserFollowBtn.innerHTML = "Follow"
+      }
+
+      if (targetUserFollowersCount !== null) {
+        targetUserFollowersCount.textContent = data.followers
+      }
+    })
+    .catch((error) => {
+      // mute error if request redirected to login
+      if (!(error instanceof DOMException)) {
+        console.error("Error:", error)
+      }
+    })
+}
+
 const likePost = (postId) => {
   let likeContainer = document.getElementById(`like-container-post-${postId}`)
   let likeCount = document.getElementById(`like-count-post-${postId}`)
   let likeIcon = document.getElementById(`like-icon-${postId}`)
 
-  fetch(`${buildAbsoluteUrl("")}/handlelike/${postId}`, {
+  fetch(buildAbsoluteUrl(`/handlelike/${postId}`), {
     method: "POST",
     credentials: "same-origin",
     headers: {
