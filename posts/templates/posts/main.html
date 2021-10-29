@@ -14,8 +14,12 @@
     {% include 'posts/post_form.html' %}
   {% endif %}
 
-  {% url 'posts:posts-hx' as posts_hx_url %}
-  {% include "htmx/lazy_load_htmx.html" with  get_url=posts_hx_url %}
+  <div id="app">
+    <div id="htmxLoadWrapper">
+      {% url 'posts:posts-hx' as posts_hx_url %}
+      {% include "htmx/lazy_load_htmx.html" with  get_url=posts_hx_url %}
+    </div>
+  </div>
 
 {% endblock content %}
 
@@ -30,8 +34,4 @@
 {% endblock content-right %}
 
 {% block scripts %}
-    <script type="module" src={% static 'postsScript.js' %} defer></script>
-    {% if user.is_authenticated %}
-        <script type="module" src={% static 'postsScriptLoggedIn.js' %} defer></script>
-    {% endif %}
 {% endblock scripts %}
