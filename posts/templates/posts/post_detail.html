@@ -143,18 +143,12 @@
                 <h3>Comments</h3>
             </div>
             <div class="post-comments-content">
-                <ul class="list-group">
-                {% for comment in comments %}
-                    <li class="list-group-item">
-                        {% include 'posts/post.html' with post=comment %}
-                    </li>
-                {% endfor %}
-                </ul>
+                <div id="htmxLoadWrapper">
+                    {% url 'posts:post-comments-hx' post.pk as post_comments_hx_url %}
+                    {% include "htmx/lazy_load_htmx.html" with hx_get_url=post_comments_hx_url %}
+                </div>
             </div>
         </div>
-        {% if comments.paginator.num_pages > 1 %}
-            {% include 'posts/pagination.html' with page_obj=comments %}
-        {% endif %}
     {% endif %}
 {% endblock content %}
 
