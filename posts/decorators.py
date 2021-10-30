@@ -1,4 +1,5 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http.response import HttpResponse
 from django.template.response import TemplateResponse
 
 
@@ -19,6 +20,9 @@ def get_posts_paginator_hx(func):
             posts = paginator.page(1)
         except EmptyPage:
             posts = paginator.page(paginator.num_pages)
+
+        if len(posts) == 0:
+            return HttpResponse("<h3>Posts not found</h3>")
 
         return TemplateResponse(
             request,
