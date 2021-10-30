@@ -30,6 +30,13 @@ def post_hx(request, pk):
 
 
 @get_posts_paginator_hx
+def post_comments_hx(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    qs = post.get_comments()
+    return qs
+
+
+@get_posts_paginator_hx
 def posts_hx(request):
     qs = Post.objects.all().order_by("-created")
     return qs
@@ -37,7 +44,7 @@ def posts_hx(request):
 
 @get_posts_paginator_hx
 def posts_by_user_hx(request, pk):
-    author = Profile.objects.get(pk=pk)
+    author = get_object_or_404(Profile, pk=pk)
     qs = Post.objects.filter(author=author).order_by("-created")
     return qs
 

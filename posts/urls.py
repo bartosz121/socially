@@ -9,6 +9,7 @@ from .views import (
     delete_post,
     # htmx
     post_hx,
+    post_comments_hx,
     posts_hx,
     posts_by_user_hx,
     popular_posts_hx,
@@ -21,6 +22,11 @@ app_name = "posts"
 urlpatterns = [
     # HTMX
     path("posts/post_hx/<int:pk>", post_hx, name="post-hx"),
+    path(
+        "posts/post_comments_hx/<int:pk>",
+        post_comments_hx,
+        name="post-comments-hx",
+    ),
     path("posts/posts_hx/", posts_hx, name="posts-hx"),
     path(
         "posts/posts_by_user_hx/<int:pk>",
