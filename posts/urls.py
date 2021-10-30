@@ -15,7 +15,6 @@ from .views import (
     popular_posts_hx,
     search_form_hx,
     search_post_query_hx,
-    follow_suggestions_hx,
 )
 
 app_name = "posts"
@@ -44,11 +43,6 @@ urlpatterns = [
         "posts/search_post_query_hx/<slug:query>",
         search_post_query_hx,
         name="search-query-hx",
-    ),
-    path(
-        "posts/follow_suggestions_hx/",
-        follow_suggestions_hx,
-        name="follow-suggestions-hx",
     ),
     # Standard
     path("", HomeView.as_view(), name="home-view"),

@@ -7,7 +7,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.template.response import TemplateResponse
 from django.views import View
-from django.views.generic import UpdateView, ListView
+from django.views.generic import UpdateView
 from django.views.decorators.http import require_http_methods
 from profiles.models import Profile
 from .models import Post
@@ -69,21 +69,6 @@ def search_form_hx(request):
     search_form = SearchForm()
     return TemplateResponse(
         request, "htmx/_hx/search_form_hx.html", {"search_form": search_form}
-    )
-
-
-def follow_suggestions_hx(request):
-    if request.user.is_authenticated:
-        follow_suggestions = request.user.profile.get_follow_suggestions()
-    else:
-        # TODO get 'popular' accounts
-        # for now get random
-        follow_suggestions = Profile.objects.order_by("?")[:5]
-
-    return TemplateResponse(
-        request,
-        "htmx/_hx/follow_suggestions_hx.html",
-        {"follow_suggestions": follow_suggestions},
     )
 
 
