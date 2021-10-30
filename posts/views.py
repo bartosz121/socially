@@ -1,6 +1,5 @@
 from collections import defaultdict
 from django.core.exceptions import PermissionDenied
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -15,6 +14,7 @@ from profiles.models import Profile
 from .models import Post
 from .forms import PostForm, ReplyForm, SearchForm
 from .helpers import PaginableView
+from .decorators import get_posts_paginator_hx
 
 # Create your views here.
 
@@ -29,21 +29,17 @@ def post_hx(request, pk):
     return TemplateResponse(request, "posts/post.html", {"post": post})
 
 
+@get_posts_paginator_hx
 def posts_hx(request):
     qs = Post.objects.all().order_by("-created")
-    page = request.GET.get("page", 1)
-    paginator = Paginator(qs, 10)
+    return qs
 
-    try:
-        posts = paginator.page(page)
-    except PageNotAnInteger:
-        posts = paginator.page(1)
-    except EmptyPage:
-        posts = paginator.page(paginator.num_pages)
 
-    return TemplateResponse(
-        request, "htmx/_hx/posts_hx.html", {"posts": posts}
-    )
+@get_posts_paginator_hx
+def posts_by_user_hx(request, pk):
+    author = Profile.objects.get(pk=pk)
+    qs = Post.objects.filter(author=author).order_by("-created")
+    return qs
 
 
 def popular_posts_hx(request):
@@ -81,6 +77,7 @@ def follow_suggestions_hx(request):
 
 
 # Standard views
+
 
 class SearchView(PaginableView):
     template_name = "posts/search.html"
