@@ -167,8 +167,3 @@ const imageModal = (imgUrl) => {
   modalImgTag.src = imgUrl;
   modal.show()
 }
-
-// TODO
-// - post detail js functions - same as in normal post
-// - follow buttons in suggestions - js function
-// - profile page, setup htmx to work there and image modal
