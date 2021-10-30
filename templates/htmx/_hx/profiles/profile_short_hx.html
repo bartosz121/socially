@@ -1,0 +1,6 @@
+<a href="{{ profile.get_absolute_url }}">
+    <div class="wrapper d-flex my-2">
+        <img class="profile-picture-medium rounded" src={{ profile.profile_picture.url }} alt="Profile picture">
+        <p class="pointer-hover-underline text-break ms-2 mt-3">{{ profile.username }}</p>
+    </div>
+</a>

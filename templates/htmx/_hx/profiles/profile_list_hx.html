@@ -1,0 +1,12 @@
+<div class="profiles-result">
+    {% for profile in result %}
+        {% include "htmx/_hx/profiles/profile_short_hx.html" %}
+    {% endfor %}
+    {% if result.has_next %}
+        <div class="my-4" hx-get="{{ hx_get_url }}?page={{ result.next_page_number }}" hx-trigger="revealed" hx-swap="outerHTML">
+            <div class="spinner-wrapper text-center">
+                <div class="spinner-border" role="status"></div>
+            </div>
+        </div>
+    {% endif %}
+</div>
