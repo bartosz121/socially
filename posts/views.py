@@ -49,6 +49,12 @@ def posts_by_user_hx(request, pk):
     return qs
 
 
+@get_posts_paginator_hx
+def search_query_hx(request, query):
+    qs = Post.objects.filter(body__search=query)
+    return qs
+
+
 def popular_posts_hx(request):
     most_replies_posts = sorted(
         Post.objects.all(), key=lambda x: x.comment_count, reverse=True
@@ -92,21 +98,14 @@ class SearchView(PaginableView):
     def get(self, request, *args, **kwargs):
         form = SearchForm()
         query = None
-        results = defaultdict(list)
+        profiles = None
         if "query" in request.GET:
             form = SearchForm(request.GET)
             if form.is_valid():
                 query = form.cleaned_data["query"]
-                results.update(
-                    posts=self.get_paginator_page(
-                        Post.objects.filter(body__search=query), 10
-                    )
-                )
-                results.update(
-                    profiles=Profile.objects.filter(username__icontains=query)[
-                        :5
-                    ]
-                )
+                profiles = Profile.objects.filter(username__icontains=query)[
+                    :5
+                ]
 
         return render(
             request,
@@ -114,7 +113,7 @@ class SearchView(PaginableView):
             {
                 "form": form,
                 "query": query,
-                "results": results,
+                "profiles": profiles,
             },
         )
 
