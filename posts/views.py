@@ -12,7 +12,7 @@ from django.views.decorators.http import require_http_methods
 from profiles.models import Profile
 from .models import Post
 from .forms import PostForm, ReplyForm, SearchForm
-from .decorators import get_posts_paginator_hx
+from .decorators import get_paginator_hx
 
 # Create your views here.
 
@@ -27,27 +27,27 @@ def post_hx(request, pk):
     return TemplateResponse(request, "posts/post.html", {"post": post})
 
 
-@get_posts_paginator_hx
+@get_paginator_hx("htmx/_hx/posts_hx.html")
 def post_comments_hx(request, pk):
     post = get_object_or_404(Post, pk=pk)
     qs = post.get_comments()
     return qs
 
 
-@get_posts_paginator_hx
+@get_paginator_hx("htmx/_hx/posts_hx.html")
 def posts_hx(request):
     qs = Post.objects.all().order_by("-created")
     return qs
 
 
-@get_posts_paginator_hx
+@get_paginator_hx("htmx/_hx/posts_hx.html")
 def posts_by_user_hx(request, pk):
     author = get_object_or_404(Profile, pk=pk)
     qs = Post.objects.filter(author=author).order_by("-created")
     return qs
 
 
-@get_posts_paginator_hx
+@get_paginator_hx("htmx/_hx/posts_hx.html")
 def search_query_hx(request, query):
     qs = Post.objects.filter(body__search=query)
     return qs
