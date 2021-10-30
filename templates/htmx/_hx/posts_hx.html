@@ -3,7 +3,7 @@
         {% include 'posts/post.html' %}
     {% endfor %}
     {% if posts.has_next %}
-        <div class="my-4" hx-get="{% url 'posts:posts-hx' %}?page={{ posts.next_page_number }}" hx-trigger="revealed" hx-swap="outerHTML">
+        <div class="my-4" hx-get="{{ hx_get_url }}?page={{ posts.next_page_number }}" hx-trigger="revealed" hx-swap="outerHTML">
             <div class="spinner-wrapper text-center">
             <div class="spinner-border" role="status"></div>
             </div>
