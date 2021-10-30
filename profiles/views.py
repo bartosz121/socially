@@ -1,13 +1,48 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
+from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views import View
 from django.views.generic.detail import DetailView
 from accounts.models import CustomUser
 from .models import Profile
+from posts.decorators import get_paginator_hx
 
-# Create your views here.
+
+# HTMX
+
+
+@get_paginator_hx("htmx/_hx/profiles/profile_list_hx.html")
+def profile_followers_hx(request, pk):
+    profile = get_object_or_404(Profile, pk=pk)
+    qs = profile.get_followers()
+    return qs
+
+
+@get_paginator_hx("htmx/_hx/profiles/profile_list_hx.html")
+def profile_following_hx(request, pk):
+    profile = get_object_or_404(Profile, pk=pk)
+    qs = profile.get_following_profiles()
+    return qs
+
+
+def follow_suggestions_hx(request):
+    if request.user.is_authenticated:
+        follow_suggestions = request.user.profile.get_follow_suggestions()
+    else:
+        # TODO get 'popular' accounts
+        # for now get random
+        follow_suggestions = Profile.objects.order_by("?")[:5]
+
+    return TemplateResponse(
+        request,
+        "htmx/_hx/follow_suggestions_hx.html",
+        {"follow_suggestions": follow_suggestions},
+    )
+
+
+# Standard
 
 
 class ProfileDetailView(DetailView):
