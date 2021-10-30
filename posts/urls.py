@@ -10,6 +10,7 @@ from .views import (
     # htmx
     post_hx,
     posts_hx,
+    posts_by_user_hx,
     popular_posts_hx,
     search_form_hx,
     follow_suggestions_hx,
@@ -21,6 +22,11 @@ urlpatterns = [
     # HTMX
     path("posts/post_hx/<int:pk>", post_hx, name="post-hx"),
     path("posts/posts_hx/", posts_hx, name="posts-hx"),
+    path(
+        "posts/posts_by_user_hx/<int:pk>",
+        posts_by_user_hx,
+        name="posts-by-user-hx",
+    ),
     path(
         "posts/popular_posts_hx/",
         popular_posts_hx,
