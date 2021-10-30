@@ -1,4 +1,3 @@
-from collections import defaultdict
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -13,7 +12,6 @@ from django.views.decorators.http import require_http_methods
 from profiles.models import Profile
 from .models import Post
 from .forms import PostForm, ReplyForm, SearchForm
-from .helpers import PaginableView
 from .decorators import get_posts_paginator_hx
 
 # Create your views here.
@@ -92,7 +90,7 @@ def follow_suggestions_hx(request):
 # Standard views
 
 
-class SearchView(PaginableView):
+class SearchView(View):
     template_name = "posts/search.html"
 
     def get(self, request, *args, **kwargs):
@@ -118,7 +116,7 @@ class SearchView(PaginableView):
         )
 
 
-class HomeView(PaginableView):
+class HomeView(View):
     template_name = "posts/main.html"
 
     def get_context_data(self, **kwargs):
@@ -147,7 +145,7 @@ class HomeView(PaginableView):
         return render(request, self.template_name, self.get_context_data())
 
 
-class PostDetailView(PaginableView):
+class PostDetailView(View):
     http_method_names = ["get", "post"]
     template_name = "posts/post_detail.html"
 
@@ -155,10 +153,6 @@ class PostDetailView(PaginableView):
         pk = self.kwargs["pk"]
         parent_post = get_object_or_404(Post, pk=pk)
         kwargs["post"] = parent_post
-        comments_qs = Post.objects.filter(parent=parent_post).order_by(
-            "-created"
-        )
-        kwargs["comments"] = self.get_paginator_page(comments_qs, 5)
 
         if "reply_form" not in kwargs:
             kwargs["reply_form"] = ReplyForm()
@@ -239,9 +233,8 @@ class HandleLike(LoginRequiredMixin, View):
         )
 
 
-class ExploreView(ListView, PaginableView):
-    model = Post
-    ordering = ["-created"]
+class ExploreView(View):
     template_name = "posts/explore.html"
-    context_object_name = "posts"
-    paginate_by = 10
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
