@@ -39,7 +39,7 @@ class Post(models.Model):
 
     def get_comments(self):
         """Return posts with 'parent' set to 'this' post"""
-        return Post.objects.filter(parent=self)
+        return Post.objects.filter(parent=self).order_by("-updated")
 
     def get_user_liked(self, user):
         """Did given user like the post"""
