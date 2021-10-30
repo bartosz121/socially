@@ -47,9 +47,9 @@ def posts_by_user_hx(request, pk):
     return qs
 
 
-@get_paginator_hx("htmx/_hx/posts_hx.html")
-def search_query_hx(request, query):
-    qs = Post.objects.filter(body__search=query)
+@get_paginator_hx("htmx/_hx/search/search_post_list_hx.html")
+def search_post_query_hx(request, query):
+    qs = Post.objects.filter(body__search=query).order_by("-created")
     return qs
 
 

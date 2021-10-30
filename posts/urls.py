@@ -14,7 +14,7 @@ from .views import (
     posts_by_user_hx,
     popular_posts_hx,
     search_form_hx,
-    search_query_hx,
+    search_post_query_hx,
     follow_suggestions_hx,
 )
 
@@ -41,8 +41,8 @@ urlpatterns = [
     ),
     path("posts/search_form_hx/", search_form_hx, name="search-form-hx"),
     path(
-        "posts/search_query_hx/<slug:query>",
-        search_query_hx,
+        "posts/search_post_query_hx/<slug:query>",
+        search_post_query_hx,
         name="search-query-hx",
     ),
     path(
