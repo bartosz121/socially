@@ -1,8 +1,28 @@
 {% load crispy_forms_tags %}
 <div class="card my-4">
     <div class="card-body">
-        <form method="POST" enctype="multipart/form-data">
-        {% crispy form %}
+        <form id="post-form" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.body|as_crispy_field:"bootstrap5" }}
+            <div class="row">
+                <div class="col-lg-9">
+                    <div id="div_id_picture" class="mb-3">
+                        <div class=" mb-2">
+                            {{ form.picture|as_crispy_field:"bootstrap5" }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md ">
+                    <div class="ms-lg-3 pe-lg-3 w-100">
+                        <button id="post-submit-btn" hx-post={% url 'posts:home-view' %} hx-encoding="multipart/form-data" hx-target="#posts-container" hx-swap="afterbegin settle:.3s" name="submit_post" class="btn btn-primary w-100" id="submit-id-submit_post">Post</button>
+                    </div>
+                </div>
+            </div>
         </form>
+        <script>
+            document.getElementById("post-submit-btn").addEventListener("htmx:afterRequest", () => {
+                document.getElementById("post-form").reset()
+            })
+        </script>
     </div>
 </div>

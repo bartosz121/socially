@@ -129,31 +129,55 @@
             <hr>
                 <div class="reply-container">
                     <div class="reply-body">
-                        <form method="POST" enctype="multipart/form-data">
-                            {% crispy reply_form %}
+                        <form id="reply-form" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ reply_form.body|as_crispy_field:"bootstrap5" }}
+                            <div class="row">
+                                <div class="col-lg-9">
+                                    <div id="div_id_picture" class="mb-3">
+                                        <div class=" mb-2">
+                                            {{ reply_form.picture|as_crispy_field:"bootstrap5" }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md ">
+                                    <div class="ms-lg-3 pe-lg-3 w-100">
+                                        <button id="reply-submit-btn" hx-post={{ post.get_absolute_url }} hx-encoding="multipart/form-data" hx-target="#posts-container" hx-swap="afterbegin settle:.3s" name="submit_post" class="btn btn-primary w-100" id="submit-id-submit_post">Reply</button>
+                                    </div>
+                                </div>
+                            </div>
                         </form>
                     </div>
                 </div>
             {% endif %}
         </div>
     </div>
-    {% if post.comment_count > 0 %}
         <div class="post-comments my-4" id="comments">
-            <div class="post-comments-title">
-                <h3>Comments</h3>
-            </div>
+            {% if post.comment_count > 0 %}
+                <div class="post-comments-title">
+                    <h3>Comments</h3>
+                </div>
             <div class="post-comments-content">
                 <div id="htmxLoadWrapper">
                     {% url 'posts:post-comments-hx' post.pk as post_comments_hx_url %}
                     {% include "htmx/lazy_load_htmx.html" with hx_get_url=post_comments_hx_url %}
                 </div>
             </div>
+            {% else %}
+            <div id="posts-container">
+            {% comment %} if there are no comments and user sends a reply htmx will put it here {% endcomment %}
+            </div>
+            {% endif %}
         </div>
-    {% endif %}
 {% endblock content %}
 
 {% block scripts %}
     <script>
+    htmx.logAll()
+        document.getElementById("reply-submit-btn").addEventListener("htmx:afterRequest", () => {
+            document.getElementById("reply-form").reset()
+        })
+
         document.getElementById('like-btn-{{ post.pk }}').addEventListener('click', () => {
             likePost({{ post.pk }})
         })
