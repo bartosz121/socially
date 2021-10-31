@@ -173,9 +173,6 @@
 
 {% block scripts %}
     <script>
-        document.getElementById("reply-submit-btn").addEventListener("htmx:afterRequest", () => {
-            document.getElementById("reply-form").reset()
-        })
 
         document.getElementById('like-btn-{{ post.pk }}').addEventListener('click', () => {
             likePost({{ post.pk }})
@@ -184,6 +181,12 @@
         document.getElementById('copyUrl-{{ post.pk }}').addEventListener('click', () => {
             copyUrlPost({{ post.pk }})
         })
+
+        {% if request.user.is_authenticated %}
+            document.getElementById("reply-submit-btn").addEventListener("htmx:afterRequest", () => {
+                document.getElementById("reply-form").reset()
+            })
+        {% endif %}
 
         {% if post.picture %}
             document.getElementById('post-img-modal-{{ post.pk }}').addEventListener('click', () => {
