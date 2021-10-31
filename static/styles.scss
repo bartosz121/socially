@@ -101,7 +101,14 @@ a, a:hover, a:focus, a:active {
     }
 }
 
+.post.htmx-added {
+    opacity: 0;
+}
+
 .post {
+    opacity: 1;
+    transition: opacity .7s ease-out;
+
     abbr {
         text-decoration: none;
     }
