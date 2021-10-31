@@ -115,9 +115,11 @@ class HomeView(View):
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             form.instance.author = request.user.profile
-            form.save()
-            messages.success(request, "Posted!")
-            return redirect("posts:home-view")
+            post = form.save()
+
+            # HTMX response
+            return TemplateResponse(request, "posts/post.html", {"post": post})
+
         else:
             messages.error(request, "Something went wrong...")
             context["form"] = form
@@ -153,9 +155,12 @@ class PostDetailView(View):
         if reply_form.is_valid():
             reply_form.instance.author = request.user.profile
             reply_form.instance.parent = get_object_or_404(Post, pk=pk)
-            reply_form.save()
-            messages.success(request, "Reply posted!")
-            return redirect(reverse("posts:post-detail", kwargs={"pk": pk}))
+            reply = reply_form.save()
+
+            # HTMX response
+            return TemplateResponse(
+                request, "posts/post.html", {"post": reply}
+            )
         else:
             messages.error(request, "Something went wrong...")
             context["reply_form"] = reply_form
