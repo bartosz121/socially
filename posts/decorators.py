@@ -8,7 +8,7 @@ def get_paginator_hx(template):
         def wrap(request, *args, **kwargs):
             qs = func(request, *args, **kwargs)
             page = request.GET.get("page", 1)
-            hx_get_url = request.build_absolute_uri(request.path)
+            hx_get_url = request.path
             paginator = Paginator(qs, 10)
 
             try:
