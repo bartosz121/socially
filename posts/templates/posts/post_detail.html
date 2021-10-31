@@ -173,7 +173,6 @@
 
 {% block scripts %}
     <script>
-    htmx.logAll()
         document.getElementById("reply-submit-btn").addEventListener("htmx:afterRequest", () => {
             document.getElementById("reply-form").reset()
         })
