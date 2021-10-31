@@ -11,8 +11,8 @@ Social media website built with Django, vanilla JS(with [HTMX](https://htmx.org/
 
 ## TODO
 
-- [x] Lazy loading
-- [x] Infinite scroll
+- [x] ~~Lazy loading~~
+- [x] ~~Infinite scroll~~
 - [ ] Realtime updates (e.g. like count, new posts)
 - [ ] Notifications
 - [ ] Message/private chat system
