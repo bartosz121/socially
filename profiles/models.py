@@ -2,11 +2,25 @@ from django.db import models
 from django.conf import settings
 from django.urls import reverse
 from posts.models import Post
+from pathlib import Path
+import uuid
 
-# Create your models here.
+from .mixins import ResizeImageMixin
+
+PROFILE_PICTURE_SIZE = (300, 300)
+PROFILE_BACKGROUND_SIZE = (800, 200)
 
 
-class Profile(models.Model):
+def profile_images_handler(instance, filename):
+    fpath = Path(filename)
+    new_filename = f"{str(uuid.uuid4())}{fpath.suffix}"
+    return f"profile_images/{new_filename}"
+
+
+class Profile(
+    models.Model,
+    ResizeImageMixin,
+):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -24,10 +38,11 @@ class Profile(models.Model):
         },
     )
     profile_picture = models.ImageField(
-        upload_to="profile_pictures", default="profile_pictures/default.png"
+        upload_to=profile_images_handler,
+        default="profile_pictures/default.png",
     )
     profile_background = models.ImageField(
-        upload_to="profile_backgrounds",
+        upload_to=profile_images_handler,
         default="profile_backgrounds/default.png",
     )
     bio = models.TextField(
@@ -53,6 +68,11 @@ class Profile(models.Model):
     @property
     def followers_count(self):
         return len(self.get_followers())
+
+    def save(self, *args, **kwargs):
+        self.resize(self.profile_picture.path, PROFILE_PICTURE_SIZE)
+        self.resize(self.profile_background.path, PROFILE_BACKGROUND_SIZE)
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse(
