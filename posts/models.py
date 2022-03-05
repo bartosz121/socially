@@ -1,16 +1,23 @@
 from django.db import models
 from django.urls import reverse
 from django.conf import settings
-from django.shortcuts import redirect
+from pathlib import Path
+import uuid
 
-# Create your models here.
+
+def post_image_upload_handler(instance, filename):
+    fpath = Path(filename)
+    new_filename = f"{str(uuid.uuid4())}{fpath.suffix}"
+    return f"pictures/{new_filename}"
 
 
 class Post(models.Model):
     parent = models.ForeignKey(
         "self", on_delete=models.SET_NULL, null=True, blank=True
     )
-    picture = models.ImageField(upload_to="pictures", blank=True)
+    picture = models.ImageField(
+        upload_to=post_image_upload_handler, blank=True
+    )
     body = models.TextField(max_length=300)
     author = models.ForeignKey(
         "profiles.Profile",
