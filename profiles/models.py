@@ -7,9 +7,6 @@ import uuid
 
 from .mixins import ResizeImageMixin
 
-PROFILE_PICTURE_SIZE = (300, 300)
-PROFILE_BACKGROUND_SIZE = (800, 200)
-
 
 def profile_images_handler(instance, filename):
     fpath = Path(filename)
@@ -39,11 +36,11 @@ class Profile(
     )
     profile_picture = models.ImageField(
         upload_to=profile_images_handler,
-        default="profile_pictures/default.png",
+        default="profile_images/profile_default.png",
     )
     profile_background = models.ImageField(
         upload_to=profile_images_handler,
-        default="profile_backgrounds/default.png",
+        default="profile_images/background_default.jpg",
     )
     bio = models.TextField(
         max_length=180, help_text="Write something about yourself!", blank=True
@@ -70,8 +67,10 @@ class Profile(
         return len(self.get_followers())
 
     def save(self, *args, **kwargs):
-        self.resize(self.profile_picture.path, PROFILE_PICTURE_SIZE)
-        self.resize(self.profile_background.path, PROFILE_BACKGROUND_SIZE)
+        self.resize(self.profile_picture.path, settings.PROFILE_PICTURE_SIZE)
+        self.resize(
+            self.profile_background.path, settings.PROFILE_BACKGROUND_SIZE
+        )
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):
