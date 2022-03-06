@@ -32,8 +32,12 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env("ALLOWED_HOSTS").split()
 
+# Models constants
+MAX_POST_LENGTH = 240
+PROFILE_PICTURE_SIZE = (300, 300)
+PROFILE_BACKGROUND_SIZE = (800, 200)
 
 # Application definition
 
@@ -50,7 +54,9 @@ INSTALLED_APPS = [
     "compressor",
     "coverage",
     "django_htmx",
+    "rest_framework",
     # apps
+    "api",
     "accounts",
     "posts",
     "profiles",
