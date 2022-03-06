@@ -18,7 +18,7 @@ class Post(models.Model):
     picture = models.ImageField(
         upload_to=post_image_upload_handler, blank=True
     )
-    body = models.TextField(max_length=300)
+    body = models.TextField(max_length=settings.MAX_POST_LENGTH)
     author = models.ForeignKey(
         "profiles.Profile",
         on_delete=models.CASCADE,
