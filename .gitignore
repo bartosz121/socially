@@ -144,9 +144,36 @@ media/pictures
 
 # profile pics/backgrunds
 media/profile_backgrounds/*
-!media/profile_backgrounds/default.png
+media/profile_images/*
+!media/profile_images/profile_default.png
+!media/profile_images/background_default.jpg
 
 media/profile_pictures/*
-!media/profile_pictures/default.png
 
 static/CACHE
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.env.db
