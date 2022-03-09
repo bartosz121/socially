@@ -4,6 +4,8 @@ from django.conf import settings
 from pathlib import Path
 import uuid
 
+User = settings.AUTH_USER_MODEL
+
 
 def post_image_upload_handler(instance, filename):
     fpath = Path(filename)
@@ -20,7 +22,7 @@ class Post(models.Model):
     )
     body = models.TextField(max_length=settings.MAX_POST_LENGTH)
     author = models.ForeignKey(
-        "profiles.Profile",
+        User,
         on_delete=models.CASCADE,
         default=None,
         related_name="posts",
