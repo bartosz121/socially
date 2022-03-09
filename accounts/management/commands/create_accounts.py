@@ -9,7 +9,6 @@ from django.core.files import File
 from django.core.management.base import BaseCommand, CommandParser
 from accounts.tests.factories import CustomUserFactory
 from profiles.models import Profile
-from profiles.tests.factories import ProfileFactory
 from django.contrib.auth import get_user_model
 
 
@@ -34,13 +33,10 @@ class Command(BaseCommand):
 
         accounts = self.create_accounts(n)
         self.stdout.write(f"Accounts created!")
-        self.stdout.write(f"IDs: {[user.id for user, _ in accounts]}")
+        self.stdout.write(f"IDs: {[user.id for user in accounts]}")
 
     def create_user(self):
         return CustomUserFactory()
-
-    def create_profile(self, user):
-        return ProfileFactory(user=user)
 
     def create_accounts(self, n=10) -> List[Tuple[User, Profile]]:
         """
@@ -51,22 +47,24 @@ class Command(BaseCommand):
         accounts = []
         for _ in range(n):
             # randomize if account should have some random background/profile picture with faker.pybool()
-            user, profile = self.create_user_with_profile(
+            user = self.create_user_and_update_profile(
                 background=self.faker.pybool(),
                 picture=self.faker.pybool(),
             )
 
             self.stdout.write(
-                self.style.SUCCESS(f"Created account - {profile.username}")
+                self.style.SUCCESS(
+                    f"Created account - {user.profile.username}"
+                )
             )
 
-            accounts.append((user, profile))
+            accounts.append(user)
 
         return accounts
 
-    def create_user_with_profile(self, background=False, picture=False):
+    def create_user_and_update_profile(self, background=False, picture=False):
         user = self.create_user()
-        profile = self.create_profile(user)
+        profile = user.profile
 
         if background:
             prof_bg_name, prof_bg_path = self.get_profile_background()
@@ -80,7 +78,7 @@ class Command(BaseCommand):
                 prof_pic_name, File(open(prof_pic_path, "rb"))
             )
 
-        return user, profile
+        return user
 
     def cleanup_downloaded_images(self):
         images_path = Path(__file__).parent / "downloaded"
