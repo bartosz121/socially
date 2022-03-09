@@ -1,11 +1,15 @@
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
+from django.db.models.signals import post_save
 from posts.models import Post
 from pathlib import Path
 import uuid
 
 from .mixins import ResizeImageMixin
+
+
+User = settings.AUTH_USER_MODEL
 
 
 def profile_images_handler(instance, filename):
@@ -124,3 +128,12 @@ class Profile(
         if len(profiles) > 3:
             return profiles[:3]
         return profiles
+
+
+def user_did_save(sender, instance, created, *args, **kwargs):
+    if created:
+        username = instance.email.split("@")[0]
+        Profile.objects.get_or_create(user=instance, username=username)
+
+
+post_save.connect(user_did_save, sender=User)
