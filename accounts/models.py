@@ -2,7 +2,6 @@ import uuid
 from django.db import models
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
-from profiles.models import Profile
 
 
 class CustomUserManager(BaseUserManager):
@@ -11,7 +10,7 @@ class CustomUserManager(BaseUserManager):
     instead of username
     """
 
-    def create_user(self, email, password, create_profile=False, **fields):
+    def create_user(self, email, password, **fields):
         def get_random_username():
             return str(uuid.uuid4()).split("-")[0]
 
@@ -21,14 +20,6 @@ class CustomUserManager(BaseUserManager):
         user = self.model(email=email, **fields)
         user.set_password(password)
         user.save()
-        if create_profile:
-            while True:
-                random_username = get_random_username()
-                if Profile.objects.filter(username=random_username).exists():
-                    continue
-                else:
-                    Profile(user=user, username=random_username).save()
-                    break
         return user
 
     def create_superuser(self, email, password, **fields):
@@ -41,7 +32,7 @@ class CustomUserManager(BaseUserManager):
         if fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have 'is_superuser' set to True")
 
-        return self.create_user(email, password, create_profile=True, **fields)
+        return self.create_user(email, password, **fields)
 
 
 class CustomUser(AbstractUser):
