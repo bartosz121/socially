@@ -24,27 +24,19 @@ class Post(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        default=None,
         related_name="posts",
     )
-    liked = models.ManyToManyField(
-        settings.AUTH_USER_MODEL,
-        default=None,
-        blank=True,
-        related_name="liked",
+    likes = models.ManyToManyField(
+        User, blank=True, related_name="liked", through="PostLike"
     )
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.pk} by {self.author.username}"
+        return f"{self.pk} by {self.author.profile.username}"
 
     def get_absolute_url(self):
         return reverse("posts:post-detail", kwargs={"pk": self.pk})
-
-    def get_liked(self):
-        """Return users that liked the post"""
-        return self.liked.all()
 
     def get_comments(self):
         """Return posts with 'parent' set to 'this' post"""
@@ -55,13 +47,15 @@ class Post(models.Model):
         return user in self.get_liked()
 
     @property
-    def like_count(self):
-        return self.liked.all().count()
-
-    @property
     def comment_count(self):
         return self.get_comments().count()
 
     @property
     def author_username(self):
         return self.author.username
+
+
+class PostLike(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)

@@ -1,12 +1,17 @@
 from django.contrib import admin
 from django.db.models import Count
-from .models import Post
+from .models import Post, PostLike
 
 # Register your models here.
 
 
+class PostLikeAdmin(admin.TabularInline):
+    model = PostLike
+
+
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
+    inlines = [PostLikeAdmin]
     list_display = (
         "id",
         "author",
@@ -17,7 +22,7 @@ class PostAdmin(admin.ModelAdmin):
         "updated",
     )
 
-    list_filter = ("author", "liked")
+    list_filter = ("author", "likes")
     search_fields = ("body",)
     date_hierarchy = "created"
     ordering = (
@@ -28,7 +33,7 @@ class PostAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         queryset = queryset.annotate(
-            _likes=Count("liked", distinct=True),
+            _likes=Count("likes", distinct=True),
         )
         return queryset
 
