@@ -1,3 +1,5 @@
+import numeral from "numeral";
+
 export const getCookie = (name) => {
   let cookieValue = null;
   if (document.cookie && document.cookie !== '') {
@@ -12,4 +14,14 @@ export const getCookie = (name) => {
     }
   }
   return cookieValue;
+}
+
+export const formatNumberToDisplay = (value) => {
+  let format = "0 a";
+
+  if (1000 < value && value < 100000) {
+    format = "0.0 a"
+  }
+
+  return numeral(value).format(format)
 }
