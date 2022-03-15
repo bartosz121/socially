@@ -46,6 +46,14 @@ const PostBottom = ({
       .then((res) => {
         setLikeCount(res.data.like_count);
         setUserLiked(!userLiked);
+      })
+      .catch((err) => {
+        if (err.response) {
+          if (err.response.status === 403) {
+            window.location.pathname = "/accounts/login/";
+          }
+        }
+        console.error(err);
       });
   };
 
