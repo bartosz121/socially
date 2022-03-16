@@ -1,20 +1,13 @@
-from django.core.exceptions import PermissionDenied
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.http import JsonResponse
-from django.shortcuts import redirect, render, get_object_or_404
-from django.urls import reverse
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.shortcuts import render, get_object_or_404
 from django.template.response import TemplateResponse
 from django.views import View
 from django.views.generic import UpdateView
-from django.views.decorators.http import require_http_methods
 from profiles.models import Profile
 from .models import Post
 from .forms import PostForm, ReplyForm, SearchForm
 from .decorators import get_paginator_hx
-
-# Create your views here.
 
 # HTMX views
 # Not sure if there is some name convention
@@ -179,48 +172,6 @@ class PostUpdateView(UserPassesTestMixin, UpdateView):
     def test_func(self):
         post = self.get_object()
         return post.author.user == self.request.user
-
-
-@login_required
-@require_http_methods(["DELETE"])
-def delete_post(request, pk):
-    post = Post.objects.get(id=pk)
-    if request.user.profile != post.author and not request.user.is_staff:
-        raise PermissionDenied
-
-    post.delete()
-    response = {"result": "deleted", "redirect": False}
-
-    if request.GET.get("redirect") == "True":
-        response["redirect"] = True
-
-    return JsonResponse(response, safe=False)
-
-
-class HandleLike(LoginRequiredMixin, View):
-    def post(self, request, post_pk, *args, **kwargs):
-        # TODO user can delete post and it will still be visible meanwhile user likes -> this throws error
-        post = Post.objects.get(pk=post_pk)
-        response = {}
-
-        if not post.get_user_liked(request.user):
-            response["value"] = "like"
-            post.liked.add(request.user)
-        else:
-            response["value"] = "dislike"
-            post.liked.remove(request.user)
-
-        response["likes"] = post.like_count
-
-        return JsonResponse(response, safe=False)
-
-    def get(self, request, post_pk, *args, **kwargs):
-        post = Post.objects.filter(id=post_pk)
-        if not post:
-            return redirect("posts:home-view")
-        return redirect(
-            reverse("posts:post-detail", kwargs={"pk": post[0].pk})
-        )
 
 
 class ExploreView(View):

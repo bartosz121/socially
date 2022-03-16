@@ -3,10 +3,8 @@ from .views import (
     ExploreView,
     HomeView,
     PostDetailView,
-    HandleLike,
     PostUpdateView,
     SearchView,
-    delete_post,
     # htmx
     post_hx,
     post_comments_hx,
@@ -52,6 +50,4 @@ urlpatterns = [
     path(
         "posts/update/<int:pk>", PostUpdateView.as_view(), name="post-update"
     ),
-    path("posts/delete/<int:pk>", delete_post, name="post-delete"),
-    path("handlelike/<int:post_pk>", HandleLike.as_view(), name="handle-like"),
 ]
