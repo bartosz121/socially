@@ -1,13 +1,13 @@
 from rest_framework import permissions
 
 
-class IsAuthorOrReadOnly(permissions.BasePermission):
+class IsAuthorOrIsStaffOrReadOnly(permissions.BasePermission):
     """
-    Allow only authors of an object to update/delete
+    Allow only authors and staff to update/delete objects
     """
 
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        return obj.author == request.user
+        return obj.author == request.user or request.user.is_staff

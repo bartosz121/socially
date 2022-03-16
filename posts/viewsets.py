@@ -1,6 +1,6 @@
 from django.conf import settings
 
-from posts.permissions import IsAuthorOrReadOnly
+from posts.permissions import IsAuthorOrIsStaffOrReadOnly
 from .serializers import PostSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework import status
@@ -31,7 +31,7 @@ class PostViewSet(
     serializer_class = PostSerializer
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
-        IsAuthorOrReadOnly,
+        IsAuthorOrIsStaffOrReadOnly,
     ]
 
     def list(self, request, *args, **kwargs):
