@@ -59,43 +59,49 @@ const PostBottom = ({
 
   return (
     <div className="post-bottom user-select-none d-flex flex-row">
-      <PostActionButton
-        className="comments d-flex flex-row justify-content-center align-items-center bd-highlight"
-        handleClick={goToDetailPage}
-      >
-        <i className="bi bi-chat"></i>
-        <span className="p-2">
-          {postCommentCount > 0 ? (
-            formatNumberToDisplay(postCommentCount)
-          ) : (
-            <span>&nbsp;</span>
-          )}
-        </span>
-      </PostActionButton>
-      <PostActionButton
-        className={`likes ${
-          userLiked && "liked"
-        } d-flex flex-row justify-content-center align-items-center bd-highlight`}
-        handleClick={likePost}
-      >
-        <i className={`bi ${userLiked ? "bi-heart-fill" : "bi-heart"}`}></i>
-        <span className="p-2">
-          {likeCount > 0 ? (
-            formatNumberToDisplay(likeCount)
-          ) : (
-            <span>&nbsp;</span>
-          )}
-        </span>
-      </PostActionButton>
-      <PostActionButton
-        className="share d-flex flex-row justify-content-center align-items-center bd-highlight"
-        title="Copy URL"
-        handleClick={async () => {
-          await copyTextToClipboard(postDetailUrl);
-        }}
-      >
-        <i className="bi bi-box-arrow-up"></i>
-      </PostActionButton>
+      {postCommentCount && (
+        <PostActionButton
+          className="comments d-flex flex-row justify-content-center align-items-center bd-highlight"
+          handleClick={goToDetailPage}
+        >
+          <i className="bi bi-chat"></i>
+          <span className="p-2">
+            {postCommentCount > 0 ? (
+              formatNumberToDisplay(postCommentCount)
+            ) : (
+              <span>&nbsp;</span>
+            )}
+          </span>
+        </PostActionButton>
+      )}
+      {likeCount && (
+        <PostActionButton
+          className={`likes ${
+            userLiked && "liked"
+          } d-flex flex-row justify-content-center align-items-center bd-highlight`}
+          handleClick={likePost}
+        >
+          <i className={`bi ${userLiked ? "bi-heart-fill" : "bi-heart"}`}></i>
+          <span className="p-2">
+            {likeCount > 0 ? (
+              formatNumberToDisplay(likeCount)
+            ) : (
+              <span>&nbsp;</span>
+            )}
+          </span>
+        </PostActionButton>
+      )}
+      {postDetailUrl && (
+        <PostActionButton
+          className="share d-flex flex-row justify-content-center align-items-center bd-highlight"
+          title="Copy URL"
+          handleClick={async () => {
+            await copyTextToClipboard(postDetailUrl);
+          }}
+        >
+          <i className="bi bi-box-arrow-up"></i>
+        </PostActionButton>
+      )}
     </div>
   );
 };
