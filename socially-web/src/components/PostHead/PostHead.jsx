@@ -1,11 +1,12 @@
 import axios from "axios";
 import { formatDistanceToNow, format, compareAsc } from "date-fns";
 import { getCookie } from "../../utils";
+import { ButtonToolbar, ButtonGroup, Button } from "react-bootstrap";
 
 const PostHead = ({
+  userCanEdit,
   postId,
   postAuthor,
-  postDetailUrl,
   editUrl,
   created,
   updated,
@@ -77,47 +78,26 @@ const PostHead = ({
           )}
         </div>
       </div>
-      <div className="post-dots ms-auto text-muted">
-        <i
-          className="bi bi-three-dots-vertical"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        ></i>
-        <ul
-          className="dropdown-menu"
-          aria-labelledby="postDetailDropdownMenuButton{{ post.pk }}"
-        >
-          <li>
-            <a className="dropdown-item" href={postDetailUrl}>
-              <i className="bi bi-box-arrow-right me-2"></i>
-              <span>Check post page</span>
-            </a>
-          </li>
-          <li>
-            <a className="dropdown-item" href={postDetailUrl}>
-              <i className="bi bi-person-circle me-2"></i>
-              <span>Check author profile</span>
-            </a>
-          </li>
-          {editUrl && (
-            <div>
-              <li>
-                <a className="dropdown-item" href={editUrl}>
-                  <i className="bi bi-pencil me-2"></i>
-                  <span>Edit post</span>
-                </a>
-              </li>
-              <li onClick={() => deletePost(postId)}>
-                <a className="dropdown-item">
-                  <i className="bi bi-trash me-2"></i>
-                  <span>Delete post</span>
-                </a>
-              </li>
-            </div>
-          )}
-        </ul>
-      </div>
+      {userCanEdit && (
+        <ButtonToolbar className="ms-auto h-75">
+          <ButtonGroup>
+            <Button
+              variant="outline-secondary"
+              onClick={() => (window.location.href = editUrl)}
+              title="Edit post"
+            >
+              <i className="bi bi-pencil"></i>
+            </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={() => deletePost(postId)}
+              title="Delete post"
+            >
+              <i className="bi bi-trash"></i>
+            </Button>
+          </ButtonGroup>
+        </ButtonToolbar>
+      )}
     </div>
   );
 };
