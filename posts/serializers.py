@@ -1,7 +1,5 @@
 from django.conf import settings
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from rest_framework_recursive.fields import RecursiveField
 from rest_framework.reverse import reverse
 
 from .models import Post
@@ -69,12 +67,9 @@ class PostSerializer(serializers.ModelSerializer):
 
     def get_edit_url(self, obj):
         request = self.context.get("request")
-        if obj.author == request.user:
-            return reverse(
-                "posts:post-update", kwargs={"pk": obj.pk}, request=request
-            )
-
-        return None
+        return reverse(
+            "posts:post-update", kwargs={"pk": obj.pk}, request=request
+        )
 
 
 class PostLikeSerializer(serializers.Serializer):
