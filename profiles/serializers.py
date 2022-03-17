@@ -20,7 +20,7 @@ class ProfilePostInlineSerializer(serializers.Serializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(source="user.pk", read_only=True)
-    follower_count = serializers.SerializerMethodField()
+    followers_count = serializers.SerializerMethodField()
     following_count = serializers.SerializerMethodField()
     url = serializers.HyperlinkedIdentityField(
         view_name="profiles:profile-detail",
@@ -36,15 +36,15 @@ class ProfileSerializer(serializers.ModelSerializer):
             "profile_picture",
             "profile_background",
             "bio",
-            "follower_count",
+            "followers_count",
             "following_count",
             "url",
             "created",
             "updated",
         ]
 
-    def get_follower_count(self, obj):
-        return obj.followers.count()
+    def get_followers_count(self, obj):
+        return obj.get_followers_count()
 
     def get_following_count(self, obj):
-        return obj.following.count()
+        return obj.get_following_count()
