@@ -10,7 +10,6 @@ Registration
     <h1 class="mb-4">Registration</h1>
     <form method="post">
         {% csrf_token %}
-        {{profile_form | crispy}}
         {{user_form | crispy}}
         <input class="btn btn-primary" type='submit' value="Register"/>
     </form>
