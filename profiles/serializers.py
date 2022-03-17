@@ -3,9 +3,9 @@ from rest_framework import serializers
 from .models import Profile
 
 
-class ProfilePostInlineSerializer(serializers.Serializer):
+class ProfileBasicSerializer(serializers.Serializer):
     """
-    Provides basic profile information
+    Basic profile information
     """
 
     id = serializers.IntegerField(read_only=True)

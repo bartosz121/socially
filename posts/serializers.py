@@ -4,13 +4,13 @@ from rest_framework.reverse import reverse
 
 from .models import Post
 
-from profiles.serializers import ProfilePostInlineSerializer
+from profiles.serializers import ProfileBasicSerializer
 
 User = settings.AUTH_USER_MODEL
 
 
 class PostParentSerializer(serializers.ModelSerializer):
-    parent_author = ProfilePostInlineSerializer(
+    parent_author = ProfileBasicSerializer(
         source="author.profile", read_only=True
     )
     parent_url = serializers.HyperlinkedIdentityField(
@@ -30,7 +30,7 @@ class PostParentSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     parent_post = PostParentSerializer(source="parent", read_only=True)
-    post_author = ProfilePostInlineSerializer(
+    post_author = ProfileBasicSerializer(
         source="author.profile", read_only=True
     )
     url = serializers.HyperlinkedIdentityField(
