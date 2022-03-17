@@ -59,7 +59,7 @@ const PostBottom = ({
 
   return (
     <div className="post-bottom user-select-none d-flex flex-row">
-      {postCommentCount && (
+      {postCommentCount !== undefined && (
         <PostActionButton
           className="comments d-flex flex-row justify-content-center align-items-center bd-highlight"
           handleClick={goToDetailPage}
@@ -74,7 +74,7 @@ const PostBottom = ({
           </span>
         </PostActionButton>
       )}
-      {likeCount && (
+      {likeCount !== undefined && (
         <PostActionButton
           className={`likes ${
             userLiked && "liked"
@@ -91,7 +91,7 @@ const PostBottom = ({
           </span>
         </PostActionButton>
       )}
-      {postDetailUrl && (
+      {postDetailUrl !== undefined && (
         <PostActionButton
           className="share d-flex flex-row justify-content-center align-items-center bd-highlight"
           title="Copy URL"
