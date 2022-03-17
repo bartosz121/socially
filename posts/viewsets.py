@@ -1,7 +1,4 @@
 from django.conf import settings
-
-from posts.permissions import IsAuthorOrIsStaffOrReadOnly
-from .serializers import PostSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework import viewsets
@@ -10,9 +7,9 @@ from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
+from api.permissions import IsAuthorOrIsStaffOrReadOnly
+from .serializers import PostSerializer, PostLikeSerializer
 from .models import Post
-
-from .serializers import PostLikeSerializer
 
 User = settings.AUTH_USER_MODEL
 
@@ -35,7 +32,7 @@ class PostViewSet(
     ]
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
+        queryset = self.get_queryset().latest()
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -88,3 +85,18 @@ class PostViewSet(
         is_liked = post.likes.filter(id=user.id).exists()
 
         return Response({"is_liked": is_liked})
+
+    @action(
+        methods=["GET"], detail=True, url_name="comments", url_path="comments"
+    )
+    def post_comments(self, request, pk=None, *args, **kwargs):
+        post_qs = self.get_queryset()
+        post = get_object_or_404(post_qs, pk=pk)
+        comments = Post.objects.get_comments(post)
+
+        page = self.paginate_queryset(comments)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        return Response(serializer.data)
