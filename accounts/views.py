@@ -21,28 +21,23 @@ from .forms import (
 def register(request):
     if request.method == "POST":
         user_form = CustomUserCreationForm(request.POST)
-        profile_form = RegistrationProfileForm(request.POST)
-        if user_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid():
             created_user = user_form.save()
-            profile_form.instance.user = created_user
-            profile_form.save()
             messages.success(request, "Account created! You can now login.")
             return redirect("accounts:login")
 
         else:
             messages.error(request, "Please correct the error below.")
             user_form = CustomUserCreationForm(request.POST)
-            profile_form = RegistrationProfileForm(request.POST)
     else:
         if request.user.is_authenticated:
             return redirect("posts:home-view")
         user_form = CustomUserCreationForm()
-        profile_form = RegistrationProfileForm()
 
     return render(
         request,
         "accounts/registration/register.html",
-        {"user_form": user_form, "profile_form": profile_form},
+        {"user_form": user_form},
     )
 
 
