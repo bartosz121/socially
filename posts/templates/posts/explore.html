@@ -4,10 +4,5 @@
 
 {% block content %}
     <h3 class="text-center">All posts</h3>
-    <div class="posts">
-        <div id="htmxLoadWrapper">
-            {% url 'posts:posts-hx' as posts_hx_url %}
-            {% include "htmx/lazy_load_htmx.html" with hx_get_url=posts_hx_url %}
-        </div>
-    </div>
+    <div id="explore-feed"  data-user-id={{ request.user.pk }} data-user-is-staff={{request.user.is_staff}}></div>
 {% endblock content %}
