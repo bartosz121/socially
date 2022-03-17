@@ -38,6 +38,9 @@ class PostQuerySet(models.QuerySet):
             .order_by("-created")
         )
 
+    def comments_to(self, post):
+        return self.filter(parent=post).order_by("-created")
+
 
 class PostManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
@@ -48,6 +51,9 @@ class PostManager(models.Manager):
 
     def user_feed(self, user):
         return self.get_queryset().feed(user)
+
+    def get_comments(self, post):
+        return self.get_queryset().comments_to(post)
 
 
 class Post(models.Model):
