@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from django.urls import reverse
 from django.conf import settings
 from pathlib import Path
@@ -11,6 +12,42 @@ def post_image_upload_handler(instance, filename):
     fpath = Path(filename)
     new_filename = f"{str(uuid.uuid4())}{fpath.suffix}"
     return f"pictures/{new_filename}"
+
+
+class PostQuerySet(models.QuerySet):
+    def latest(self):
+        return self.order_by("-created")
+
+    def feed(self, user):
+        """
+        Returns posts created by followed user authors.
+        If not following anyone return latest posts
+        """
+        profile = user.profile
+
+        is_following_anyone = profile.following.exists()
+        followed_users_id = []
+        if not is_following_anyone:
+            return self.latest()
+
+        followed_users_id = profile.following.values_list("user_id", flat=True)
+
+        return (
+            self.filter(Q(author_id__in=followed_users_id) | Q(author=user))
+            .distinct()
+            .order_by("-created")
+        )
+
+
+class PostManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        return PostQuerySet(self.model, using=self._db)
+
+    def latest(self):
+        return self.get_queryset().latest()
+
+    def user_feed(self, user):
+        return self.get_queryset().feed(user)
 
 
 class Post(models.Model):
@@ -32,27 +69,16 @@ class Post(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
+    objects = PostManager()
+
     def __str__(self):
         return f"{self.pk} by {self.author.profile.username}"
 
     def get_absolute_url(self):
         return reverse("posts:post-detail", kwargs={"pk": self.pk})
 
-    def get_comments(self):
-        """Return posts with 'parent' set to 'this' post"""
-        return Post.objects.filter(parent=self).order_by("-updated")
-
-    def get_user_liked(self, user):
-        """Did given user like the post"""
-        return user in self.get_liked()
-
-    @property
-    def comment_count(self):
-        return self.get_comments().count()
-
-    @property
-    def author_username(self):
-        return self.author.username
+    def get_comment_count(self):
+        return Post.objects.filter(parent=self).count()
 
 
 class PostLike(models.Model):
