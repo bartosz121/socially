@@ -63,7 +63,7 @@ class PostSerializer(serializers.ModelSerializer):
         return obj.likes.count()
 
     def get_comment_count(self, obj):
-        return obj.comment_count
+        return obj.get_comment_count()
 
     def get_edit_url(self, obj):
         request = self.context.get("request")
