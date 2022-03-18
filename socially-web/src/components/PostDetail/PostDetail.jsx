@@ -31,6 +31,7 @@ const PostDetail = ({ postId, userId, userIsStaff }) => {
           />
           <hr />
           <PostBottom
+            userId={userId}
             postId={data.id}
             postLikeCount={data.like_count}
             postDetailUrl={data.url}

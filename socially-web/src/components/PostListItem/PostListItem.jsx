@@ -57,6 +57,7 @@ const PostListItem = ({ post, userId, userIsStaff }) => {
             />
             <hr />
             <PostBottom
+              userId={userId}
               postId={postId}
               postDetailUrl={postDetailUrl}
               postLikeCount={likeCount}
