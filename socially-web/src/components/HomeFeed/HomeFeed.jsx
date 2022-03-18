@@ -1,6 +1,9 @@
 import PostList from "../post-list/PostList";
 
 const HomeFeed = ({ userId, userIsStaff }) => {
+  const isLoggedIn = userId === "None" ? false : true;
+  const userFeedUrl = `http://localhost:8000/api/v1/users/${userId}/feed/`;
+
   const endMessage = (
     <div className="d-flex justify-content-center">
       <p>
@@ -20,6 +23,7 @@ const HomeFeed = ({ userId, userIsStaff }) => {
   );
   return (
     <PostList
+      sourceUrl={isLoggedIn && userFeedUrl}
       endMessage={endMessage}
       userId={userId}
       userIsStaff={userIsStaff}
