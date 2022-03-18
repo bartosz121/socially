@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from posts.viewsets import PostViewSet
 from profiles.viewsets import ProfileViewSet
+from accounts.api.urls import urlpatterns as users_urlpatterns
 
 app_name = "api"
 
@@ -11,3 +12,4 @@ router.register("posts", PostViewSet, basename="post")
 router.register("profiles", ProfileViewSet, basename="profile")
 
 urlpatterns = router.urls
+urlpatterns += users_urlpatterns
