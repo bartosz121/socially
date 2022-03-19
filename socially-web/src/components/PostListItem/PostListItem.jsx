@@ -8,9 +8,6 @@ import PostBottom from "../PostBottom/PostBottom";
 import "./PostListItem.scss";
 
 const PostListItem = ({ post, userId, userIsStaff }) => {
-  userId = parseInt(userId);
-  userIsStaff = userIsStaff === "True" ? true : false;
-
   const {
     id: postId,
     parent_post: parentPost,
@@ -25,19 +22,19 @@ const PostListItem = ({ post, userId, userIsStaff }) => {
     edit_url: editUrl,
   } = post;
 
-  const userCanEdit = userId === postAuthor.id || userIsStaff;
+  const userCanEdit = userId === postAuthor.user_id || userIsStaff;
 
   const [postVisible, setPostVisible] = useState(true);
 
   return (
-    <AnimatePresence>
+    <AnimatePresence exitBeforeEnter={true} onExitComplete={() => null}>
       {postVisible && (
         <motion.div
           key={`post-${postId}`}
           initial={{ y: "20vh", opacity: 0 }}
           animate={{ y: "0", opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.6 }}
+          exit={{ y: "-20vh", opacity: 0 }}
+          transition={{ duration: 0.4 }}
         >
           <div className="post my-4 p-5 bg-light border rounded-3">
             <PostHead
@@ -48,7 +45,7 @@ const PostListItem = ({ post, userId, userIsStaff }) => {
               editUrl={editUrl}
               created={created}
               updated={updated}
-              setPostVisible={setPostVisible}
+              deleteCallback={() => setPostVisible(false)}
             />
             <PostBody
               body={body}
