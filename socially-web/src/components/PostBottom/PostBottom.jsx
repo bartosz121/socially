@@ -17,14 +17,16 @@ const PostBottom = ({
   const [userLiked, setUserLiked] = useState(false);
 
   useEffect(() => {
-    axios
-      .get(`/api/v1/users/${userId}/liked/${postId}/`)
-      .then((res) => {
-        setUserLiked(res.data.is_liked);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (userId) {
+      axios
+        .get(`/api/v1/users/${userId}/liked/${postId}/`)
+        .then((res) => {
+          setUserLiked(res.data.is_liked);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
   }, []);
 
   const goToDetailPage = () => (window.location.href = postDetailUrl);
