@@ -2,10 +2,13 @@ import useFetch from "../../useFetchData";
 import PostHead from "../PostHead/PostHead";
 import PostBody from "../post-body/PostBody";
 import PostBottom from "../PostBottom/PostBottom";
-import PostComments from "../PostComments/PostComments";
+import CommentsSection from "../CommentsSection/CommentsSection";
 import Spinner from "../spinner/Spinner";
 
 const PostDetail = ({ postId, userId, userIsStaff }) => {
+  userId = parseInt(userId);
+  userIsStaff = userIsStaff === "True" ? true : false;
+
   const { data, loading, error } = useFetch(
     `http://localhost:8000/api/v1/posts/${postId}/`
   );
@@ -16,13 +19,13 @@ const PostDetail = ({ postId, userId, userIsStaff }) => {
       {data && (
         <div className="post my-4 p-5 bg-light border rounded-3">
           <PostHead
-            userCanEdit={userId === data.post_author.id || userIsStaff}
-            postId={data.id}
+            userCanEdit={userId === data.post_author.user_id || userIsStaff}
+            postId={postId}
             postAuthor={data.post_author}
             editUrl={data.editUrl}
             created={data.created}
             updated={data.updated}
-            setPostVisible={console.log}
+            deleteCallback={() => (window.location.pathname = "/")}
           />
           <PostBody
             body={data.body}
@@ -32,18 +35,17 @@ const PostDetail = ({ postId, userId, userIsStaff }) => {
           <hr />
           <PostBottom
             userId={userId}
-            postId={data.id}
+            postId={postId}
             postLikeCount={data.like_count}
             postDetailUrl={data.url}
           />
           <hr />
-          {data.comment_count > 0 && (
-            <PostComments
-              parentId={data.id}
-              userId={userId}
-              userIsStaff={userIsStaff}
-            />
-          )}
+          <CommentsSection
+            parentId={postId}
+            anyComments={data.comment_count > 0}
+            userId={userId}
+            userIsStaff={userIsStaff}
+          />
         </div>
       )}
     </div>
