@@ -3,12 +3,12 @@ from rest_framework import serializers
 from .models import Profile
 
 
-class ProfileBasicSerializer(serializers.Serializer):
+class ProfileBasicSerializer(serializers.ModelSerializer):
     """
     Basic profile information
     """
 
-    id = serializers.IntegerField(read_only=True)
+    user_id = serializers.IntegerField(source="user.pk", read_only=True)
     username = serializers.CharField(read_only=True)
     profile_picture = serializers.ImageField(read_only=True)
     profile_url = serializers.HyperlinkedIdentityField(
@@ -16,6 +16,10 @@ class ProfileBasicSerializer(serializers.Serializer):
         lookup_field="username",
         read_only=True,
     )
+
+    class Meta:
+        model = Profile
+        fields = ["user_id", "username", "profile_picture", "profile_url"]
 
 
 class ProfileSerializer(serializers.ModelSerializer):
