@@ -3,7 +3,6 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 
 from .models import Post
-
 from profiles.serializers import ProfileBasicSerializer
 
 User = settings.AUTH_USER_MODEL
@@ -38,7 +37,9 @@ class PostSerializer(serializers.ModelSerializer):
         lookup_field="pk",
         read_only=True,
     )
-    picture_url = serializers.ImageField(source="picture", read_only=True)
+    picture_url = serializers.ImageField(
+        source="picture", allow_empty_file=True
+    )
     like_count = serializers.SerializerMethodField(read_only=True)
     comment_count = serializers.SerializerMethodField(read_only=True)
     edit_url = serializers.SerializerMethodField(read_only=True)
