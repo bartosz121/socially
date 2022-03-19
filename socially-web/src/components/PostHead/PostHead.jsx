@@ -10,7 +10,7 @@ const PostHead = ({
   editUrl,
   created,
   updated,
-  setPostVisible,
+  deleteCallback,
 }) => {
   const csrfToken = getCookie("csrftoken");
 
@@ -26,7 +26,7 @@ const PostHead = ({
       })
       .then((res) => {
         if (res.status === 204) {
-          setPostVisible(false);
+          deleteCallback();
         }
       })
       .catch((err) => {
