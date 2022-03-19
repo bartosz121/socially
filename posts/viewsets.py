@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework import viewsets
@@ -7,15 +6,15 @@ from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
+from api.utils import get_paginated_queryset_response
 from api.permissions import IsAuthorOrIsStaffOrReadOnly
 from .serializers import PostSerializer, PostLikeSerializer
 from .models import Post
 
-User = settings.AUTH_USER_MODEL
-
 
 class PostViewSet(
     mixins.ListModelMixin,
+    mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
@@ -26,21 +25,36 @@ class PostViewSet(
 
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        IsAuthorOrIsStaffOrReadOnly,
-    ]
+
+    def get_permissions(self):
+        if self.action in ("list", "retrieve", "post_comments"):
+            permission_classes = [
+                permissions.IsAuthenticatedOrReadOnly,
+            ]
+        else:
+            permission_classes = [permissions.IsAuthenticated]
+
+        return [permission() for permission in permission_classes]
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset().latest()
 
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+        return get_paginated_queryset_response(
+            self.paginator, request, queryset, self.get_serializer
+        )
 
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+    def create(self, request, *args, **kwargs):
+        serializer = PostSerializer(
+            data=request.data, context={"request": request}
+        )
+        if serializer.is_valid(raise_exception=True):
+            parent_post = None
+            if parent_post_pk := request.data.get("parent_post", False):
+                queryset = self.get_queryset()
+                parent_post = get_object_or_404(queryset, pk=parent_post_pk)
+
+            serializer.save(author=request.user, parent=parent_post)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def retrieve(self, request, pk=None):
         queryset = self.get_queryset()
@@ -75,17 +89,6 @@ class PostViewSet(
                 status=status.HTTP_200_OK,
             )
 
-    @action(methods=["GET"], detail=True, url_path="is-liked")
-    def is_liked(self, request, pk=None, *args, **kwargs):
-        post_qs = self.get_queryset()
-        post = get_object_or_404(post_qs, pk=pk)
-
-        user = request.user
-
-        is_liked = post.likes.filter(id=user.id).exists()
-
-        return Response({"is_liked": is_liked})
-
     @action(
         methods=["GET"], detail=True, url_name="comments", url_path="comments"
     )
@@ -94,9 +97,6 @@ class PostViewSet(
         post = get_object_or_404(post_qs, pk=pk)
         comments = Post.objects.get_comments(post)
 
-        page = self.paginate_queryset(comments)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        return Response(serializer.data)
+        return get_paginated_queryset_response(
+            self.paginator, request, comments, self.get_serializer
+        )
