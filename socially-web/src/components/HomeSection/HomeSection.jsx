@@ -1,6 +1,10 @@
+import { useState } from "react";
 import PostList from "../post-list/PostList";
+import PostForm from "../PostForm/PostForm";
 
-const HomeFeed = ({ userId, userIsStaff }) => {
+const HomeSection = ({ userId, userIsStaff }) => {
+  const [createdPost, setCreatedPost] = useState(null);
+
   const isLoggedIn = userId === "None" ? false : true;
   const userFeedUrl = `http://localhost:8000/api/v1/users/${userId}/feed/`;
 
@@ -22,13 +26,19 @@ const HomeFeed = ({ userId, userIsStaff }) => {
     </div>
   );
   return (
-    <PostList
-      sourceUrl={isLoggedIn && userFeedUrl}
-      endMessage={endMessage}
-      userId={userId}
-      userIsStaff={userIsStaff}
-    />
+    <div>
+      {isLoggedIn && (
+        <PostForm newPostCallback={(newPost) => setCreatedPost(newPost)} />
+      )}
+      <PostList
+        newestPost={createdPost}
+        sourceUrl={isLoggedIn && userFeedUrl}
+        endMessage={endMessage}
+        userId={userId}
+        userIsStaff={userIsStaff}
+      />
+    </div>
   );
 };
 
-export default HomeFeed;
+export default HomeSection;
