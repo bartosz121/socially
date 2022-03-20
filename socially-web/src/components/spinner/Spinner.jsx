@@ -1,9 +1,9 @@
 function Spinner() {
-    return (
-        <div class="spinner-wrapper text-center">
-            <div class="spinner-border" role="status"></div>
-        </div>
-  )
+  return (
+    <div className="spinner-wrapper text-center">
+      <div className="spinner-border" role="status"></div>
+    </div>
+  );
 }
 
-export default Spinner
+export default Spinner;

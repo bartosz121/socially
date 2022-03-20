@@ -8,15 +8,15 @@ const ProfileListItem = ({ profileData }) => {
   return (
     <div
       role="button"
-      class="d-flex my-2"
+      className="d-flex my-2"
       onClick={() => (window.location.href = profileUrl)}
     >
       <img
-        class="profile-picture-medium rounded"
+        className="profile-picture-medium rounded"
         src={pictureUrl}
         alt="Profile picture"
       />
-      <p class="pointer-hover-underline text-break ms-2 mt-3">{username}</p>
+      <p className="pointer-hover-underline text-break ms-2 mt-3">{username}</p>
     </div>
   );
 };
