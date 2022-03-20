@@ -1,6 +1,6 @@
 import useFetch from "../../useFetchData";
 import PostHead from "../PostHead/PostHead";
-import PostBody from "../post-body/PostBody";
+import PostBody from "../PostBody/PostBody";
 import PostBottom from "../PostBottom/PostBottom";
 import CommentsSection from "../CommentsSection/CommentsSection";
 import Spinner from "../spinner/Spinner";

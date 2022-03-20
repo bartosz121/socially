@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import PostHead from "../PostHead/PostHead";
-import PostBody from "../post-body/PostBody";
+import PostBody from "../PostBody/PostBody";
 import PostBottom from "../PostBottom/PostBottom";
 
 import "./PostListItem.scss";
