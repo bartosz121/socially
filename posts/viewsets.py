@@ -34,7 +34,12 @@ class PostViewSet(
         return serializer_class
 
     def get_permissions(self):
-        if self.action in ("list", "retrieve", "post_comments"):
+        if self.action in (
+            "list",
+            "retrieve",
+            "post_comments",
+            "most_commented",
+        ):
             permission_classes = [
                 permissions.IsAuthenticatedOrReadOnly,
             ]
@@ -107,3 +112,15 @@ class PostViewSet(
         return get_paginated_queryset_response(
             self.paginator, request, comments, self.get_serializer
         )
+
+    @action(
+        methods=["GET"],
+        detail=False,
+        url_name="most-commented",
+        url_path="most-commented",
+    )
+    def most_commented(self, request, *args, **kwargs):
+        post_qs = Post.objects.most_comments()
+        serializer = self.get_serializer(post_qs, many=True)
+
+        return Response(serializer.data)
