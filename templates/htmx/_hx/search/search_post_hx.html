@@ -4,7 +4,7 @@
             <div class="pointer-hover-underline fw-bold text-wrap text-break">{{ post.body|truncatechars:100 }}</div>
         </a>
         <a href="{{ post.author.get_absolute_url }}">
-            <span class="pointer-hover-underline text-muted text-break text-wrap">by {{ post.author.username }}</span>
+            <span class="pointer-hover-underline text-muted text-break text-wrap">by {{ post.author.profile.username }}</span>
         </a>
     </div>
     <div class="search-item-stats">
