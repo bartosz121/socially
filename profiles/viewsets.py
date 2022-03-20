@@ -109,6 +109,22 @@ class ProfileViewSet(
     @action(
         methods=["GET"],
         detail=True,
+        url_name="follow-suggestions",
+        url_path="follow-suggestions",
+    )
+    def follow_suggestions(self, request, pk=None, *args, **kwargs):
+        qs = self.get_queryset()
+        profile = get_object_or_404(qs, pk=pk)
+        suggestions = Profile.objects.follow_suggestions(profile)
+        serializer = ProfileBasicSerializer(
+            suggestions, many=True, context={"request": request}
+        )
+
+        return Response(serializer.data)
+
+    @action(
+        methods=["GET"],
+        detail=True,
         url_name="is-user-following",
         url_path="is-following/(?P<request_user_id>[0-9]+)",
     )
