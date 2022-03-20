@@ -38,7 +38,7 @@ class PostSerializer(serializers.ModelSerializer):
         read_only=True,
     )
     picture_url = serializers.ImageField(
-        source="picture", allow_empty_file=True
+        source="picture", allow_empty_file=True, required=False
     )
     like_count = serializers.SerializerMethodField(read_only=True)
     comment_count = serializers.SerializerMethodField(read_only=True)
