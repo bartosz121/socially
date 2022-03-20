@@ -24,7 +24,14 @@ class PostViewSet(
     """
 
     queryset = Post.objects.all()
-    serializer_class = PostSerializer
+
+    def get_serializer_class(self):
+        if self.action == "like":
+            serializer_class = PostLikeSerializer
+        else:
+            serializer_class = PostSerializer
+
+        return serializer_class
 
     def get_permissions(self):
         if self.action in ("list", "retrieve", "post_comments"):
@@ -44,7 +51,7 @@ class PostViewSet(
         )
 
     def create(self, request, *args, **kwargs):
-        serializer = PostSerializer(
+        serializer = self.get_serializer(
             data=request.data, context={"request": request}
         )
         if serializer.is_valid(raise_exception=True):
@@ -70,7 +77,7 @@ class PostViewSet(
 
     @action(methods=["POST"], detail=True)
     def like(self, request, pk=None, *args, **kwargs):
-        serializer = PostLikeSerializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             queryset = self.get_queryset()
             post = get_object_or_404(queryset, pk=pk)
