@@ -36,7 +36,7 @@ const PostHead = ({
 
   return (
     <div className="post-head mb-2">
-      <div className="author-picture">
+      <div className="author-picture me-1">
         <a href={postAuthor.profile_url}>
           <img
             className="profile-picture-medium rounded"
