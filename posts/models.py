@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, Count, OuterRef, Subquery
 from django.urls import reverse
 from django.conf import settings
 from pathlib import Path
@@ -41,6 +41,18 @@ class PostQuerySet(models.QuerySet):
     def comments_to(self, post):
         return self.filter(parent=post).order_by("-created")
 
+    def by_user(self, user):
+        return self.filter(author=user).order_by("-created")
+
+    def with_comment_count(self):
+        """Annotate queryset with `comments_count`"""
+        subquery_parent_count = Post.objects.filter(parent_id=OuterRef("pk"))
+        return self.annotate(
+            comments_count=Count(
+                Subquery(subquery_parent_count.values("pk")[:1])
+            )
+        )
+
 
 class PostManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
@@ -54,6 +66,13 @@ class PostManager(models.Manager):
 
     def get_comments(self, post):
         return self.get_queryset().comments_to(post)
+
+    def most_comments(self, *, n=5):
+        queryset = self.get_queryset().with_comment_count()
+        return queryset.order_by("-comments_count")[:n]
+
+    def user_posts(self, user):
+        return self.get_queryset().by_user(user)
 
 
 class Post(models.Model):
@@ -76,6 +95,15 @@ class Post(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     objects = PostManager()
+
+    # TODO properties will be removed after HTMX will be dropped
+    @property
+    def comment_count(self):
+        return Post.objects.filter(parent=self).count()
+
+    @property
+    def like_count(self):
+        return self.likes.count()
 
     def __str__(self):
         return f"{self.pk} by {self.author.profile.username}"
