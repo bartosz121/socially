@@ -7,5 +7,5 @@
 {% endblock title %}
 
 {% block content %}
-    <div id="post-detail" data-user-id={{ request.user.pk }} data-user-is-staff={{request.user.is_staff}} data-post-id={{ post.pk }}></div>
+    <div id="post-detail" data-post-id={{ post.pk }} data-request-user-id={{ request.user.pk }} data-request-user-is-staff={{request.user.is_staff}}></div>
 {% endblock content %}
