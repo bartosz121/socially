@@ -2,7 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.urls import reverse
 from django.db.models.signals import post_save
-from posts.models import Post
+from django.db.models import Count
 from pathlib import Path
 import uuid
 
@@ -16,6 +16,21 @@ def profile_images_handler(instance, filename):
     fpath = Path(filename)
     new_filename = f"{str(uuid.uuid4())}{fpath.suffix}"
     return f"profile_images/{new_filename}"
+
+
+class ProfileQuerySet(models.QuerySet):
+    def with_followers_count(self):
+        """Annotate queryset with `followers_count`"""
+        return self.annotate(followers_count=Count("followers"))
+
+
+class ProfileManager(models.Manager):
+    def get_queryset(self):
+        return ProfileQuerySet(self.model, self._db)
+
+    def most_followers(self, *, n=5):
+        queryset = self.get_queryset().with_followers_count()
+        return queryset.order_by("-followers_count")[:n]
 
 
 class Profile(
@@ -55,8 +70,10 @@ class Profile(
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
+    objects = ProfileManager()
+
     def __str__(self):
-        return f"#{self.user.pk} - {self.username}"
+        return f"#{self.pk} - {self.username}"
 
     def get_posts_count(self):
         return self.posts.all().count()
@@ -83,7 +100,9 @@ class Profile(
 def user_did_save(sender, instance, created, *args, **kwargs):
     if created:
         username = instance.email.split("@")[0]
-        Profile.objects.get_or_create(user=instance, username=username)
+        Profile.objects.get_or_create(
+            user=instance, pk=instance.pk, username=username
+        )
 
 
 post_save.connect(user_did_save, sender=User)
