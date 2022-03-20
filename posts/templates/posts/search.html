@@ -22,7 +22,13 @@
                             <div class="search-item-stats pe-4 ms-auto align-self-center">
                                 <div class="stat followers-stat" title="Followers">
                                     <i class="bi bi-person-fill"></i>
-                                    <span>{{ profile.followers_count }}</span>
+                                    <span class="d-inline-block">
+                                        {% if profile.followers_counter > 99 %}
+                                            +99
+                                        {% else %}
+                                            {{ profile.followers_counter }}
+                                        {% endif %}
+                                        </span>
                                 </div>
                             </div>
                         </div>
