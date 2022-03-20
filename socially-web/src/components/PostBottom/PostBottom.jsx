@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 
 import { formatNumberToDisplay, copyTextToClipboard } from "../../utils";
 
-import PostActionButton from "../post-action-button/PostActionButton";
+import PostActionButton from "../PostActionButton/PostActionButton";
 
 const PostBottom = ({
   requestUserId,
