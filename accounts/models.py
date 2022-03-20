@@ -11,9 +11,6 @@ class CustomUserManager(BaseUserManager):
     """
 
     def create_user(self, email, password, **fields):
-        def get_random_username():
-            return str(uuid.uuid4()).split("-")[0]
-
         if not email:
             raise ValueError("The Email must be set")
         email = self.normalize_email(email)
@@ -48,3 +45,6 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return f"User #{self.pk} {self.email}"
+
+    def get_posts_count(self):
+        return self.posts.count()
