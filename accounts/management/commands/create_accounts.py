@@ -25,7 +25,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser: CommandParser) -> None:
         parser.add_argument("n", type=int, help="Number of items to create")
         parser.add_argument(
-            "-authors_ids", nargs="+", type=int, help="Authors IDs"
+            "-authors-ids", nargs="+", type=int, help="Authors IDs"
         )
 
     def handle(self, *args, **kwargs):
