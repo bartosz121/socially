@@ -171,7 +171,7 @@ class PostUpdateView(UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         post = self.get_object()
-        return post.author.user == self.request.user
+        return post.author == self.request.user
 
 
 class ExploreView(View):
