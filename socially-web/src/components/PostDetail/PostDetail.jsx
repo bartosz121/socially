@@ -5,13 +5,11 @@ import PostBottom from "../PostBottom/PostBottom";
 import CommentsSection from "../CommentsSection/CommentsSection";
 import Spinner from "../spinner/Spinner";
 
-const PostDetail = ({ postId, userId, userIsStaff }) => {
-  userId = parseInt(userId);
-  userIsStaff = userIsStaff === "True" ? true : false;
+const PostDetail = ({ postId, requestUserId, requestUserIsStaff }) => {
+  requestUserId = parseInt(requestUserId);
+  requestUserIsStaff = requestUserIsStaff === "True" ? true : false;
 
-  const { data, loading, error } = useFetch(
-    `http://localhost:8000/api/v1/posts/${postId}/`
-  );
+  const { data, loading, error } = useFetch(`/api/v1/posts/${postId}/`);
 
   return (
     <div>
@@ -19,7 +17,9 @@ const PostDetail = ({ postId, userId, userIsStaff }) => {
       {data && (
         <div className="post my-4 p-5 bg-light border rounded-3">
           <PostHead
-            userCanEdit={userId === data.post_author.user_id || userIsStaff}
+            userCanEdit={
+              requestUserId === data.post_author.user_id || requestUserIsStaff
+            }
             postId={postId}
             postAuthor={data.post_author}
             editUrl={data.editUrl}
@@ -34,7 +34,7 @@ const PostDetail = ({ postId, userId, userIsStaff }) => {
           />
           <hr />
           <PostBottom
-            userId={userId}
+            requestUserId={requestUserId}
             postId={postId}
             postLikeCount={data.like_count}
             postDetailUrl={data.url}
@@ -43,8 +43,8 @@ const PostDetail = ({ postId, userId, userIsStaff }) => {
           <CommentsSection
             parentId={postId}
             anyComments={data.comment_count > 0}
-            userId={userId}
-            userIsStaff={userIsStaff}
+            requestUserId={requestUserId}
+            requestUserIsStaff={requestUserIsStaff}
           />
         </div>
       )}

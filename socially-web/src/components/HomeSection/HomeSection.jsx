@@ -2,11 +2,11 @@ import { useState } from "react";
 import PostList from "../post-list/PostList";
 import PostForm from "../PostForm/PostForm";
 
-const HomeSection = ({ userId, userIsStaff }) => {
+const HomeSection = ({ requestUserId, requestUserIsStaff }) => {
   const [createdPost, setCreatedPost] = useState(null);
 
-  const isLoggedIn = userId === "None" ? false : true;
-  const userFeedUrl = `http://localhost:8000/api/v1/users/${userId}/feed/`;
+  const isLoggedIn = requestUserId === "None" ? false : true;
+  const userFeedUrl = `http://localhost:8000/api/v1/users/${requestUserId}/feed/`;
 
   const endMessage = (
     <div className="d-flex justify-content-center">
@@ -34,8 +34,8 @@ const HomeSection = ({ userId, userIsStaff }) => {
         newestPost={createdPost}
         sourceUrl={isLoggedIn && userFeedUrl}
         endMessage={endMessage}
-        userId={userId}
-        userIsStaff={userIsStaff}
+        requestUserId={requestUserId}
+        requestUserIsStaff={requestUserIsStaff}
       />
     </div>
   );

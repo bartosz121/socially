@@ -6,7 +6,7 @@ import { formatNumberToDisplay, copyTextToClipboard } from "../../utils";
 import PostActionButton from "../post-action-button/PostActionButton";
 
 const PostBottom = ({
-  userId,
+  requestUserId,
   postId,
   postDetailUrl,
   postLikeCount,
@@ -17,9 +17,9 @@ const PostBottom = ({
   const [userLiked, setUserLiked] = useState(false);
 
   useEffect(() => {
-    if (userId) {
+    if (requestUserId) {
       axios
-        .get(`/api/v1/users/${userId}/liked/${postId}/`)
+        .get(`/api/v1/users/${requestUserId}/liked/${postId}/`)
         .then((res) => {
           setUserLiked(res.data.is_liked);
         })

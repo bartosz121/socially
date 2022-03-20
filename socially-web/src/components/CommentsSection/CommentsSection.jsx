@@ -2,9 +2,14 @@ import { useState } from "react";
 import PostList from "../post-list/PostList";
 import PostForm from "../PostForm/PostForm";
 
-const CommentsSection = ({ parentId, anyComments, userId, userIsStaff }) => {
+const CommentsSection = ({
+  parentId,
+  anyComments,
+  requestUserId,
+  requestUserIsStaff,
+}) => {
   const commentsUrl = `http://localhost:8000/api/v1/posts/${parentId}/comments/`;
-  const isLoggedIn = userId === "None" ? false : true;
+  const isLoggedIn = isNaN(requestUserId) ? false : true;
 
   const [createdComment, setCreatedComment] = useState(null);
 
@@ -24,8 +29,8 @@ const CommentsSection = ({ parentId, anyComments, userId, userIsStaff }) => {
             <PostList
               newestPost={createdComment}
               sourceUrl={commentsUrl}
-              userId={userId}
-              userIsStaff={userIsStaff}
+              requestUserId={requestUserId}
+              requestUserIsStaff={requestUserIsStaff}
             />
           </div>
         </div>

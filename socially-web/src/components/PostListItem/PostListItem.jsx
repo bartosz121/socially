@@ -7,7 +7,7 @@ import PostBottom from "../PostBottom/PostBottom";
 
 import "./PostListItem.scss";
 
-const PostListItem = ({ post, userId, userIsStaff }) => {
+const PostListItem = ({ post, requestUserId, requestUserIsStaff }) => {
   const {
     id: postId,
     parent_post: parentPost,
@@ -22,7 +22,8 @@ const PostListItem = ({ post, userId, userIsStaff }) => {
     edit_url: editUrl,
   } = post;
 
-  const userCanEdit = userId === postAuthor.user_id || userIsStaff;
+  const userCanEdit =
+    requestUserId === postAuthor.user_id || requestUserIsStaff;
 
   const [postVisible, setPostVisible] = useState(true);
 
@@ -54,7 +55,7 @@ const PostListItem = ({ post, userId, userIsStaff }) => {
             />
             <hr />
             <PostBottom
-              userId={userId}
+              requestUserId={requestUserId}
               postId={postId}
               postDetailUrl={postDetailUrl}
               postLikeCount={likeCount}

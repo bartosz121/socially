@@ -4,5 +4,5 @@
 
 {% block content %}
     <h3 class="text-center">All posts</h3>
-    <div id="explore-feed"  data-user-id={{ request.user.pk }} data-user-is-staff={{request.user.is_staff}}></div>
+    <div id="explore-feed"  data-request-user-id={{ request.user.pk }} data-request-user-is-staff={{request.user.is_staff}}></div>
 {% endblock content %}

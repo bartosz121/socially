@@ -7,9 +7,15 @@ import axios from "axios";
 
 import "./PostList.scss";
 
-function PostList({ newestPost, sourceUrl, endMessage, userId, userIsStaff }) {
-  userId = parseInt(userId);
-  userIsStaff = userIsStaff === "True" ? true : false;
+const PostList = ({
+  newestPost,
+  sourceUrl,
+  endMessage,
+  requestUserId,
+  requestUserIsStaff,
+}) => {
+  requestUserId = parseInt(requestUserId);
+  requestUserIsStaff = requestUserIsStaff === "True" ? true : false;
 
   const defaultPostSourceUrl = "/api/v1/posts/";
   const [posts, setPosts] = useState([]);
@@ -53,11 +59,15 @@ function PostList({ newestPost, sourceUrl, endMessage, userId, userIsStaff }) {
     >
       {posts.map((post, i) => (
         <div key={i}>
-          <PostListItem post={post} userId={userId} userIsStaff={userIsStaff} />
+          <PostListItem
+            post={post}
+            requestUserId={requestUserId}
+            requestUserIsStaff={requestUserIsStaff}
+          />
         </div>
       ))}
     </InfiniteScroll>
   );
-}
+};
 
 export default PostList;
