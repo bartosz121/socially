@@ -32,7 +32,7 @@ class UserViewSet(viewsets.GenericViewSet):
         url_path="feed",
     )
     def user_feed(self, request, pk=None):
-        user_qs = CustomUser.objects.all()
+        user_qs = self.get_queryset()
         user = get_object_or_404(user_qs, pk=pk)
 
         feed_qs = Post.objects.user_feed(user)
@@ -41,9 +41,14 @@ class UserViewSet(viewsets.GenericViewSet):
             self.paginator, request, feed_qs, PostSerializer
         )
 
-    @action(methods=["GET"], detail=True, url_name="liked")
+    @action(
+        methods=["GET"],
+        detail=True,
+        url_name="liked",
+        url_path="liked/(?P<post_pk>[0-9]+)",
+    )
     def user_liked(self, request, pk=None, post_pk=None):
-        user_qs = CustomUser.objects.all()
+        user_qs = self.get_queryset()
         user = get_object_or_404(user_qs, pk=pk)
 
         post_qs = Post.objects.all()
