@@ -33,7 +33,12 @@ class ProfileViewSet(
     ]
 
     def get_serializer_class(self):
-        if self.action in ("followers", "following"):
+        if self.action in (
+            "followers",
+            "following",
+            "follow_suggestions",
+            "most_followers",
+        ):
             serializer_class = ProfileBasicSerializer
         elif self.action == "follow":
             serializer_class = ProfileFollowSerializer
@@ -116,7 +121,7 @@ class ProfileViewSet(
         qs = self.get_queryset()
         profile = get_object_or_404(qs, pk=pk)
         suggestions = Profile.objects.follow_suggestions(profile)
-        serializer = ProfileBasicSerializer(
+        serializer = self.get_serializer(
             suggestions, many=True, context={"request": request}
         )
 
@@ -138,3 +143,15 @@ class ProfileViewSet(
         ).exists()
 
         return Response({"is_following": is_following})
+
+    @action(
+        methods=["GET"],
+        detail=False,
+        url_name="most-followers",
+        url_path="most-followers",
+    )
+    def most_followers(self, request, *args, **kwargs):
+        post_qs = Profile.objects.most_followers()
+        serializer = self.get_serializer(post_qs, many=True)
+
+        return Response(serializer.data)
