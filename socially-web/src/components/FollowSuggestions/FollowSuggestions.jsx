@@ -4,9 +4,11 @@ import Spinner from "../spinner/Spinner";
 const FollowSuggestions = ({ requestUserId }) => {
   requestUserId = parseInt(requestUserId);
 
-  const { data, loading, error } = useFetch(
-    `/api/v1/profiles/${requestUserId}/follow-suggestions/`
-  );
+  const dataSourceUrl = isNaN(requestUserId)
+    ? "/api/v1/profiles/most-followers/"
+    : `/api/v1/profiles/${requestUserId}/follow-suggestions/`;
+
+  const { data, loading, error } = useFetch(dataSourceUrl);
 
   return (
     <div>
@@ -16,7 +18,7 @@ const FollowSuggestions = ({ requestUserId }) => {
           <h4>People you might know</h4>
           <ul class="list-group">
             {data.map((profile, i) => (
-              <li class="list-group-item d-flex flex-column">
+              <li class="list-group-item d-flex flex-column" key={i}>
                 <div class="w-100 p-2 d-flex align-items-center justify-content-center flex-wrap">
                   <div class="follow-suggestion-img">
                     <a href={profile.profile_url}>
