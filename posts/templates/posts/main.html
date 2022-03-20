@@ -5,28 +5,16 @@
 {% block title %}Home{% endblock title %}
 
 {% block content-left %}
-  {% url 'posts:popular-posts-hx' as popular_posts_hx_url %}
-  {% include "htmx/lazy_load_htmx.html" with  hx_get_url=popular_posts_hx_url %}
+  <div id="popular-posts"></div>
 {% endblock content-left %}
 
 {% block content %}
-  {% if user.is_authenticated %}
-    {% include 'posts/post_form.html' %}
-  {% endif %}
-
-  <div id="htmxLoadWrapper">
-    {% url 'posts:posts-hx' as posts_hx_url %}
-    {% include "htmx/lazy_load_htmx.html" with hx_get_url=posts_hx_url %}
-  </div>
-
+  <div id="home-section" data-request-user-id={{ request.user.pk }} data-request-user-is-staff={{request.user.is_staff}}></div>
 {% endblock content %}
 
 {% block content-right %}
 
-  {% url 'posts:search-form-hx' as search_form_hx_url %}
-  {% include "htmx/lazy_load_htmx.html" with  hx_get_url=search_form_hx_url %}
-
-  {% url 'profiles:follow-suggestions-hx' as follow_suggestions_hx_url %}
-  {% include "htmx/lazy_load_htmx.html" with  hx_get_url=follow_suggestions_hx_url %}
-
+{% url 'posts:search-form-hx' as search_form_hx_url %}
+{% include "htmx/lazy_load_htmx.html" with  hx_get_url=search_form_hx_url %}
+  <div id="follow-suggestions" data-request-user-id={{ request.user.pk }}></div>
 {% endblock content-right %}
