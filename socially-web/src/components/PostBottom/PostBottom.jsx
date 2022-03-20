@@ -14,14 +14,14 @@ const PostBottom = ({
 }) => {
   const csrfToken = getCookie("csrftoken");
   const [likeCount, setLikeCount] = useState(postLikeCount);
-  const [userLiked, setUserLiked] = useState(false);
+  const [requestUserLiked, setRequestUserLiked] = useState(false);
 
   useEffect(() => {
     if (requestUserId) {
       axios
         .get(`/api/v1/users/${requestUserId}/liked/${postId}/`)
         .then((res) => {
-          setUserLiked(res.data.is_liked);
+          setRequestUserLiked(res.data.is_liked);
         })
         .catch((err) => {
           console.error(err);
@@ -32,7 +32,7 @@ const PostBottom = ({
   const goToDetailPage = () => (window.location.href = postDetailUrl);
 
   const likePost = () => {
-    const action = userLiked ? "dislike" : "like";
+    const action = requestUserLiked ? "dislike" : "like";
     axios
       .post(
         `/api/v1/posts/${postId}/like/`,
@@ -48,7 +48,7 @@ const PostBottom = ({
       )
       .then((res) => {
         setLikeCount(res.data.like_count);
-        setUserLiked(!userLiked);
+        setRequestUserLiked(!requestUserLiked);
       })
       .catch((err) => {
         if (err.response) {
@@ -80,11 +80,13 @@ const PostBottom = ({
       {likeCount !== undefined && (
         <PostActionButton
           className={`likes ${
-            userLiked && "liked"
+            requestUserLiked && "liked"
           } d-flex flex-row justify-content-center align-items-center bd-highlight`}
           handleClick={likePost}
         >
-          <i className={`bi ${userLiked ? "bi-heart-fill" : "bi-heart"}`}></i>
+          <i
+            className={`bi ${requestUserLiked ? "bi-heart-fill" : "bi-heart"}`}
+          ></i>
           <span className="p-2">
             {likeCount > 0 ? (
               formatNumberToDisplay(likeCount)
