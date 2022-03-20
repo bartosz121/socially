@@ -23,6 +23,11 @@ class ProfileQuerySet(models.QuerySet):
         """Annotate queryset with `followers_count`"""
         return self.annotate(followers_count=Count("followers"))
 
+    def get_follow_suggestions(self, profile_to_suggest):
+        return self.with_followers_count().exclude(
+            id__in=profile_to_suggest.following.values("id")
+        )
+
 
 class ProfileManager(models.Manager):
     def get_queryset(self):
@@ -31,6 +36,10 @@ class ProfileManager(models.Manager):
     def most_followers(self, *, n=5):
         queryset = self.get_queryset().with_followers_count()
         return queryset.order_by("-followers_count")[:n]
+
+    def follow_suggestions(self, profile, *, n=5):
+        queryset = self.get_queryset().get_follow_suggestions(profile)
+        return queryset[:n]
 
 
 class Profile(
@@ -71,6 +80,11 @@ class Profile(
     updated = models.DateTimeField(auto_now=True)
 
     objects = ProfileManager()
+
+    # TODO properties will be removed after HTMX would be dropped
+    @property
+    def followers_counter(self):
+        return self.followers.count()
 
     def __str__(self):
         return f"#{self.pk} - {self.username}"
