@@ -1,7 +1,7 @@
 import useFetchData from "../../useFetchData";
 import Spinner from "../../components/spinner/Spinner";
 import ProfileDetailHead from "../../components/ProfileDetailHead/ProfileDetailHead";
-import PostList from "../../components/post-list/PostList";
+import PostList from "../../components/PostList/PostList";
 
 const ProfileDetailPage = ({
   profileId,

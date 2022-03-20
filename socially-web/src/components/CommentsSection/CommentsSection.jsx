@@ -1,5 +1,5 @@
 import { useState } from "react";
-import PostList from "../post-list/PostList";
+import PostList from "../PostList/PostList";
 import PostForm from "../PostForm/PostForm";
 
 const CommentsSection = ({
