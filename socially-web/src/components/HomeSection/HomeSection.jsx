@@ -6,7 +6,7 @@ const HomeSection = ({ requestUserId, requestUserIsStaff }) => {
   const [createdPost, setCreatedPost] = useState(null);
 
   const isLoggedIn = requestUserId === "None" ? false : true;
-  const userFeedUrl = `http://localhost:8000/api/v1/users/${requestUserId}/feed/`;
+  const userFeedUrl = `/api/v1/users/${requestUserId}/feed/`;
 
   const endMessage = (
     <div className="d-flex justify-content-center">
