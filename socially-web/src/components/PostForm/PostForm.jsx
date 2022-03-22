@@ -1,14 +1,20 @@
-import axios from "axios";
+import { useState } from "react";
 import { getFormData, getCookie } from "../../utils";
+import axios from "axios";
+
+import Spinner from "../spinner/Spinner";
 
 const PostForm = ({ parentPostId, isReply, newPostCallback }) => {
   const csrfToken = getCookie("csrftoken");
+
+  const [isPostUploading, setIsPostUploading] = useState(false);
 
   const textAreaPlaceholder = isReply ? "Reply..." : "What's on your mind?";
   const buttonText = isReply ? "Reply" : "Post";
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsPostUploading(true);
     const values = getFormData(e);
 
     axios
@@ -23,7 +29,8 @@ const PostForm = ({ parentPostId, isReply, newPostCallback }) => {
       })
       .catch((error) => {
         console.error(error);
-      });
+      })
+      .finally(() => setIsPostUploading(false));
 
     e.currentTarget.reset();
   };
@@ -47,6 +54,7 @@ const PostForm = ({ parentPostId, isReply, newPostCallback }) => {
             className="textarea form-control"
             required={true}
             id="id_body"
+            disabled={isPostUploading}
           ></textarea>
         </div>
         <div className="row">
@@ -63,6 +71,7 @@ const PostForm = ({ parentPostId, isReply, newPostCallback }) => {
                         accept="image/*"
                         required={false}
                         id="id_picture"
+                        disabled={isPostUploading}
                       />
                     </div>
                   </div>
@@ -76,6 +85,7 @@ const PostForm = ({ parentPostId, isReply, newPostCallback }) => {
                 id="post-submit-btn"
                 type="submit"
                 className="btn btn-primary w-100"
+                disabled={isPostUploading}
               >
                 {buttonText}
               </button>
@@ -83,6 +93,7 @@ const PostForm = ({ parentPostId, isReply, newPostCallback }) => {
           </div>
         </div>
       </form>
+      {isPostUploading && <Spinner />}
     </div>
   );
 };
