@@ -89,9 +89,6 @@ class Profile(
     def __str__(self):
         return f"#{self.pk} - {self.username}"
 
-    def get_posts_count(self):
-        return self.posts.all().count()
-
     def get_following_count(self):
         return self.following.count()
 
