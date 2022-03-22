@@ -8,7 +8,7 @@ const CommentsSection = ({
   requestUserId,
   requestUserIsStaff,
 }) => {
-  const commentsUrl = `http://localhost:8000/api/v1/posts/${parentId}/comments/`;
+  const commentsUrl = `/api/v1/posts/${parentId}/comments/`;
   const isLoggedIn = isNaN(requestUserId) ? false : true;
 
   const [createdComment, setCreatedComment] = useState(null);
