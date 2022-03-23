@@ -43,6 +43,8 @@ class PostViewSet(
             permission_classes = [
                 permissions.IsAuthenticatedOrReadOnly,
             ]
+        elif self.action == "destroy":
+            permission_classes = [IsAuthorOrIsStaffOrReadOnly]
         else:
             permission_classes = [permissions.IsAuthenticated]
 
