@@ -1,66 +1,74 @@
-from django.test import TestCase
-from posts.tests.factories import PostFactory
+import pytest
+
 from profiles.models import Profile
-from accounts.tests.factories import CustomUserFactory, CustomSuperUserFactory
-
-# from profiles.tests.factories import ProfileFactory, SuperUserProfileFactory
+from accounts.tests.factories import CustomUserFactory
 
 
-class ProfileModelTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        # Create user with profile
-        # following 2 other users, 3 followers and 2 posts
-        cls.test_user = CustomUserFactory()
+@pytest.mark.django_db
+def test_object_name():
+    user = CustomUserFactory(email="user123@email.com")
+    expected_obj_name = f"#{user.profile.pk} - {user.profile.username}"
 
-        # Dummy users
-        dummy1 = CustomSuperUserFactory()
-        dummy2 = CustomUserFactory()
-        dummy3 = CustomUserFactory()
-        cls.dummy_users = (
-            dummy1,
-            dummy2,
-            dummy3,
-        )
+    assert str(user.profile) == expected_obj_name
 
-        # Add followers
-        dummy1.profile.following.add(cls.test_user.profile)
-        dummy2.profile.following.add(cls.test_user.profile)
-        dummy3.profile.following.add(cls.test_user.profile)
 
-        cls.followers = [
-            dummy1,
-            dummy2,
-            dummy3,
-        ]
+@pytest.mark.django_db
+def test_following_count(user):
+    test_user1 = CustomUserFactory()
+    test_user2 = CustomUserFactory()
 
-        # Test User follows 2 dummy users
-        cls.test_user.profile.following.add(dummy1.profile)
-        cls.test_user.profile.following.add(dummy2.profile)
-        cls.following = [
-            dummy1,
-            dummy2,
-        ]
+    user.profile.following.add(test_user1.profile)
+    user.profile.following.add(test_user2.profile)
 
-        # Create Posts
-        cls.posts = tuple(PostFactory(author=cls.test_user) for _ in range(4))
+    expected_value = 2
 
-    def test_object_name(self):
-        expected_object_name = (
-            f"#{self.test_user.profile.pk} - {self.test_user.profile.username}"
-        )
-        self.assertEqual(str(self.test_user.profile), expected_object_name)
+    assert user.profile.get_following_count() == expected_value
 
-    def test_following_count(self):
-        expected_following_count = len(self.following)
-        self.assertEqual(
-            self.test_user.profile.get_following_count(),
-            expected_following_count,
-        )
 
-    def test_followers_count(self):
-        expected_followers_count = len(self.followers)
-        self.assertEqual(
-            self.test_user.profile.get_followers_count(),
-            expected_followers_count,
-        )
+@pytest.mark.django_db
+def test_followers_count(user):
+    test_user1 = CustomUserFactory()
+    test_user2 = CustomUserFactory()
+
+    test_user1.profile.following.add(user.profile)
+    test_user2.profile.following.add(user.profile)
+
+    expected_value = 2
+
+    assert user.profile.get_followers_count() == expected_value
+
+
+# ProfileQuerySet
+FOLLOWERS_TEST_COUNT = 3
+
+
+@pytest.mark.django_db
+def test_with_followers_count(user):
+    followers = [CustomUserFactory() for _ in range(FOLLOWERS_TEST_COUNT)]
+
+    for f in followers:
+        user.profile.followers.add(f.profile)
+
+    user_qs = (
+        Profile.objects.all().with_followers_count().filter(user=user).first()
+    )
+
+    assert user_qs.followers_count == FOLLOWERS_TEST_COUNT
+
+
+@pytest.mark.django_db
+def test_follow_suggestions(user):
+    users_following = [
+        CustomUserFactory() for _ in range(FOLLOWERS_TEST_COUNT)
+    ]
+
+    users_not_following = [
+        CustomUserFactory() for _ in range(FOLLOWERS_TEST_COUNT)
+    ]
+
+    for u in users_following:
+        user.profile.followers.add(u.profile)
+
+    qs = Profile.objects.all().get_follow_suggestions(user.profile)
+
+    assert all([u.profile in qs for u in users_not_following])
