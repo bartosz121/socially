@@ -1,44 +1,80 @@
-from unittest.case import expectedFailure
-from django.test import TestCase
+import pytest
+
 from posts.models import Post
-from posts.tests.factories import PostFactory, PostFactoryWithParent
+from posts.tests.factories import PostFactory
 from accounts.tests.factories import CustomUserFactory
-from profiles.models import Profile
-from profiles.tests.factories import ProfileFactory
 
 
-class PostModelTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        # Create 'main' post
-        cls.test_user = CustomUserFactory(email="user@factory.com")
-        cls.post = PostFactory(author=cls.test_user)
+# Post model
+COMMENT_COUNT_TEST = 3
 
-        # Create comments
-        cls.comments = tuple(
-            PostFactoryWithParent(parent=cls.post) for _ in range(5)
-        )
 
-        # Create post 'likers'
-        cls.likers = tuple(CustomUserFactory() for _ in range(3))
-        cls.post.likes.add(*cls.likers)
+@pytest.mark.django_db
+def test_object_name(user):
+    post = PostFactory(author=user)
+    expected_obj_name = f"{post.pk} by {user.profile.username}"
 
-    def test_object_name(self):
-        expected_object_name = (
-            f"{self.post.pk} by {self.test_user.profile.username}"
-        )
-        self.assertEqual(str(self.post), expected_object_name)
+    assert str(post) == expected_obj_name
 
-    def test_like_count(self):
-        expected_like_count = len(self.likers)
-        self.assertEqual(
-            self.post.like_count,
-            expected_like_count,
-        )
 
-    def test_comment_count(self):
-        expected_comment_count = len(self.comments)
-        self.assertEqual(
-            self.post.get_comment_count(),
-            expected_comment_count,
-        )
+@pytest.mark.django_db
+def test_comment_count():
+    main_post = PostFactory()
+
+    for _ in range(COMMENT_COUNT_TEST):
+        PostFactory(parent=main_post)
+
+    assert main_post.get_comment_count() == COMMENT_COUNT_TEST
+
+
+# PostQuerySet
+@pytest.mark.django_db
+def test_latest():
+    posts = [PostFactory() for _ in range(3)]
+    posts.reverse()
+
+    qs = list(Post.objects.all().latest())
+
+    assert qs == posts
+
+
+@pytest.mark.django_db
+def test_feed(user):
+    test_users = [CustomUserFactory() for _ in range(3)]
+    expected_feed = []
+
+    for u in test_users:
+        user.profile.followers.add(u.profile)
+        expected_feed.append(PostFactory(author=u))
+
+    expected_feed.reverse()
+
+    qs = list(Post.objects.all().feed(user))
+
+    assert qs == expected_feed
+
+
+@pytest.mark.django_db
+def test_comments_to():
+    main_post = PostFactory()
+
+    comments = [PostFactory(parent=main_post) for _ in range(3)]
+    comments.reverse()
+
+    qs = list(Post.objects.all().comments_to(main_post))
+
+    assert qs == comments
+
+
+@pytest.mark.django_db
+def test_by_user(user):
+    expected_posts = [PostFactory(author=user) for _ in range(3)]
+    expected_posts.reverse()
+
+    # dummy posts
+    for _ in range(5):
+        PostFactory()
+
+    qs = list(Post.objects.all().by_user(user))
+
+    assert qs == expected_posts
