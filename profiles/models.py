@@ -31,14 +31,18 @@ class ProfileQuerySet(models.QuerySet):
 
 class ProfileManager(models.Manager):
     def get_queryset(self):
-        return ProfileQuerySet(self.model, self._db)
+        return ProfileQuerySet(self.model, self._db).order_by("-created")
 
     def most_followers(self, *, n=5):
         queryset = self.get_queryset().with_followers_count()
         return queryset.order_by("-followers_count")[:n]
 
     def follow_suggestions(self, profile, *, n=5):
-        queryset = self.get_queryset().get_follow_suggestions(profile)
+        queryset = (
+            self.get_queryset()
+            .get_follow_suggestions(profile)
+            .order_by("-followers_count")
+        )
         return queryset[:n]
 
 
