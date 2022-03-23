@@ -40,10 +40,13 @@ jobs:
 
     - name: Run Tests
       env:
+        ALLOWED_HOSTS: 127.0.0.1
+        DEBUG: False
+        SECRET_KEY: si)gsc2)1wc88djangotestkeyoudw#jq$ouqvf+s1dhm3^454
         DB_NAME: ghactions
         DB_HOST: 127.0.0.1
         DB_USERNAME: postgres
-        DB_PORT: 5432
+        PORT: 5432
         DB_PASSWORD: passw0rd123!#@
       run: |
         pytest profiles posts accounts
