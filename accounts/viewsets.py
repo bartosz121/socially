@@ -4,7 +4,6 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from api.permissions import IsUserOrIsStaff
 from api.utils import get_paginated_queryset_response
 from posts.models import Post
 from posts.serializers import PostSerializer
