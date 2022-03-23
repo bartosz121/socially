@@ -6,8 +6,6 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from accounts.models import CustomUser
-from api.permissions import IsAuthorOrIsStaffOrReadOnly
 from api.utils import get_paginated_queryset_response
 from .models import Profile
 from .serializers import (
@@ -29,7 +27,6 @@ class ProfileViewSet(
     queryset = Profile.objects.all()
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
-        IsAuthorOrIsStaffOrReadOnly,
     ]
 
     def get_serializer_class(self):
