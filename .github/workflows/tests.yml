@@ -28,9 +28,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install system dependencies
-      run: apt-get install -y libpq-dev
-
     - name: Set up Python 3.8
       uses: actions/setup-python@v2
       with:
