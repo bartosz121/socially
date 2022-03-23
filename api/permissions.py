@@ -3,7 +3,7 @@ from rest_framework import permissions
 
 class IsAuthorOrIsStaffOrReadOnly(permissions.BasePermission):
     """
-    Allow only authors and staff to update/delete objects
+    Allow only authors and staff to update/delete posts
     """
 
     def has_object_permission(self, request, view, obj):
