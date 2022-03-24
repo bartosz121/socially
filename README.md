@@ -1,7 +1,7 @@
 
 # Socially
 
-Social media website built with Django, vanilla JS(with [HTMX](https://htmx.org/)) and PostgreSQL database
+Social media website built with Django, React and PostgreSQL database
 
 ## Demo
 
@@ -13,8 +13,8 @@ Social media website built with Django, vanilla JS(with [HTMX](https://htmx.org/
 
 - [x] ~~Lazy loading~~
 - [x] ~~Infinite scroll~~
+- [x] ~~Add React~~
 - [ ] Realtime updates (e.g. like count, new posts)
 - [ ] Notifications
 - [ ] Message/private chat system
-- [ ] Let users login with accounts from other providers (Google, facebook etc.)
-- [ ] Upload videos in posts
+- [ ] Socials login
