@@ -1,7 +1,7 @@
 
 # Socially
 
-Social media website built with Django, React and PostgreSQL database
+Social media website built with Django, React and PostgreSQL database.
 
 ## Demo
 
