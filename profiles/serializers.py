@@ -11,15 +11,10 @@ class ProfileBasicSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(source="user.pk", read_only=True)
     username = serializers.CharField(read_only=True)
     profile_picture = serializers.ImageField(read_only=True)
-    profile_url = serializers.HyperlinkedIdentityField(
-        view_name="profiles:profile-detail",
-        lookup_field="username",
-        read_only=True,
-    )
 
     class Meta:
         model = Profile
-        fields = ["user_id", "username", "profile_picture", "profile_url"]
+        fields = ["user_id", "username", "profile_picture",]
 
 
 class ProfileSerializer(serializers.ModelSerializer):
