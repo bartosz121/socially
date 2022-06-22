@@ -12,18 +12,12 @@ class PostParentSerializer(serializers.ModelSerializer):
     parent_author = ProfileBasicSerializer(
         source="author.profile", read_only=True
     )
-    parent_url = serializers.HyperlinkedIdentityField(
-        source="url",
-        view_name="posts:post-detail",
-        lookup_field="pk",
-        read_only=True,
-    )
 
     class Meta:
         model = Post
         fields = [
+            "id",
             "parent_author",
-            "parent_url",
         ]
 
 
