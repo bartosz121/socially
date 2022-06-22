@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
-    "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.postgres",
     "crispy_forms",
@@ -54,7 +53,14 @@ INSTALLED_APPS = [
     "compressor",
     "coverage",
     "django_htmx",
+    "corsheaders",
+    "django.contrib.sites",
     "rest_framework",
+    "rest_framework.authtoken",
+    "dj_rest_auth",
+    "allauth",
+    "allauth.account",
+    "dj_rest_auth.registration",
     # apps
     "api",
     "accounts",
@@ -62,13 +68,15 @@ INSTALLED_APPS = [
     "profiles",
 ]
 
+SITE_ID = 1
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_htmx.middleware.HtmxMiddleware",
 ]
@@ -176,18 +184,10 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
-MESSAGE_TAGS = {
-    messages.DEBUG: "alert-info",
-    messages.INFO: "alert-info",
-    messages.SUCCESS: "alert-success",
-    messages.WARNING: "alert-warning",
-    messages.ERROR: "alert-danger",
-}
-
 COMPRESS_PRECOMPILERS = (("text/x-scss", "django_libsass.SassCompiler"),)
 
 DEFAULT_AUTHENTICATION_CLASSES = [
-    "rest_framework.authentication.SessionAuthentication",
+    "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
 ]
 
 DEFAULT_PERMISSION_CLASSES = [
@@ -211,3 +211,30 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 10,
     "DATETIME_FORMAT": "%s000",
 }
+
+ACCOUNT_ADAPTER = "accounts.adapter.AccountAdapter"
+ACCOUNT_SESSION_REMEMBER = False
+
+REST_SESSION_LOGIN = False
+REST_USE_JWT = True
+JWT_AUTH_COOKIE = "jwt_access_token"
+JWT_AUTH_REFRESH_COOKIE = "jwt_refresh_token"
+# JWT_AUTH_SECURE = True
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_VERIFICATION = "none"
+
+REST_AUTH_SERIALIZERS = {
+    "LOGIN_SERIALIZER": "accounts.serializers.LoginSerializer",
+    "USER_DETAILS_SERIALIZER": "accounts.serializers.UserDetailsSerializer",
+}
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    "REGISTER_SERIALIZER": "accounts.serializers.RegisterSerializer",
+}
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
