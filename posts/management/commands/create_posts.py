@@ -100,6 +100,13 @@ class Command(BaseCommand):
             help="Create comments to post with this id",
             default="all",
         )
+
+        optional.add_argument(
+            "-randomize",
+            type=bool,
+            help="Create comments to post with this id",
+        )
+
         optional.add_argument(
             "-post-id-to-comment",
             type=int,
@@ -111,14 +118,58 @@ class Command(BaseCommand):
         authors = kwargs["authors_ids"]
         posts_category = kwargs["posts_category"]
         post_id_to_comment = kwargs["post_id_to_comment"]
+        randomize = kwargs["randomize"]
 
-        self.stdout.write(
-            f"Creating {n} {'comments' if post_id_to_comment else 'posts'} "
-            f"per {len(authors)} users({authors})..."
-        )
+        if randomize:
+            self.stdout.write("RANDOM MODE")
+            self.run_random()
+        else:
 
-        self.create_posts(n, authors, posts_category, post_id_to_comment)
+            self.stdout.write(
+                f"Creating {n} {'comments' if post_id_to_comment else 'posts'} "
+                f"per {len(authors)} users({authors})..."
+            )
+
+            self.create_posts(n, authors, posts_category, post_id_to_comment)
         self.cleanup_downloaded_images()
+
+    def run_random(self):
+        users_qs = CustomUser.objects.all()
+        posts_qs = Post.objects.all()
+        USERS_COUNT = users_qs.count()
+        POSTS_COUNT = posts_qs.count() // 2
+        news_data = self.news.get_news("science")
+
+        random_posts = random.choices(posts_qs, k=POSTS_COUNT)
+
+        for post in random_posts:
+            n_comments = random.randint(0, USERS_COUNT // 3)
+
+            self.stdout.write(
+                f"Creating {n_comments} comments for Post #{post.id}"
+            )
+
+            comment_authors = random.choices(users_qs, k=n_comments)
+
+            for user in comment_authors:
+                profile = user.profile
+
+                self.stdout.write(f"\t\t{profile.username}: Creating posts...")
+
+                src = news_data[random.randrange(0, len(news_data))]
+
+                data = {
+                    "image_url": src.get("imageUrl"),
+                    "author": user,
+                    "body": src.get("content"),
+                }
+
+                data["parent_id"] = post.id
+
+                self.create_and_save_post(**data)
+                self.stdout.write(
+                    self.style.SUCCESS(f"\t\t\tCreated and saved post")
+                )
 
     def create_posts(
         self,
