@@ -22,11 +22,6 @@ class ProfileSerializer(serializers.ModelSerializer):
     followers_count = serializers.SerializerMethodField()
     following_count = serializers.SerializerMethodField()
     posts_count = serializers.SerializerMethodField()
-    url = serializers.HyperlinkedIdentityField(
-        view_name="profiles:profile-detail",
-        lookup_field="username",
-        read_only=True,
-    )
 
     class Meta:
         model = Profile
@@ -39,7 +34,6 @@ class ProfileSerializer(serializers.ModelSerializer):
             "followers_count",
             "following_count",
             "posts_count",
-            "url",
             "created",
             "updated",
         ]
@@ -63,3 +57,24 @@ class ProfileFollowSerializer(serializers.Serializer):
             raise serializers.ValidationError(f"Action {value!r} is not valid")
 
         return value
+
+
+class ProfileFollowCountSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(source="user.pk", read_only=True)
+    followers = serializers.SerializerMethodField()
+    following = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Profile
+        fields = [
+            "user_id",
+            "username",
+            "followers",
+            "following",
+        ]
+
+    def get_followers(self, obj):
+        return obj.get_followers_count()
+
+    def get_following(self, obj):
+        return obj.get_following_count()
