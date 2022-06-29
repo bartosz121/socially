@@ -10,7 +10,7 @@ def test_follow(user, auth_client):
 
     # follow
     response = auth_client.post(
-        f"/api/v1/profiles/{test_user.profile.id}/follow/",
+        f"/api/v1/profiles/{test_user.profile.username}/follow/",
         {"action": "follow"},
     )
     data = response.data
@@ -20,7 +20,7 @@ def test_follow(user, auth_client):
 
     # unfollow
     response = auth_client.post(
-        f"/api/v1/profiles/{test_user.profile.id}/follow/",
+        f"/api/v1/profiles/{test_user.profile.username}/follow/",
         {"action": "unfollow"},
     )
 
@@ -36,7 +36,7 @@ def test_following(user, client):
 
     test_user.profile.followers.add(user.profile)
 
-    response = client.get(f"/api/v1/profiles/{user.id}/following/")
+    response = client.get(f"/api/v1/profiles/{user.profile.username}/following/")
     assert response.status_code == 200
 
     data = response.data["results"]
@@ -51,7 +51,7 @@ def test_followers(user, client):
 
     user.profile.followers.add(test_user.profile)
 
-    response = client.get(f"/api/v1/profiles/{user.id}/followers/")
+    response = client.get(f"/api/v1/profiles/{user.profile.username}/followers/")
     assert response.status_code == 200
 
     data = response.data["results"]
@@ -72,7 +72,7 @@ def test_follow_suggestions(user, client):
     ]
     expected_suggestions.reverse()  # for zip in assert
 
-    response = client.get(f"/api/v1/profiles/{user.id}/follow-suggestions/")
+    response = client.get(f"/api/v1/profiles/{user.profile.username}/follow-suggestions/")
     assert response.status_code == 200
 
     data = response.data
@@ -92,7 +92,7 @@ def test_is_user_following(user, client):
     user.profile.following.add(test_user.profile)
 
     response = client.get(
-        f"/api/v1/profiles/{test_user.id}/is-following/{user.id}/"
+        f"/api/v1/profiles/{test_user.profile.username}/is-following/{user.profile.username}/"
     )
     assert response.status_code == 200
     assert response.data["is_following"] == True
@@ -100,7 +100,7 @@ def test_is_user_following(user, client):
     # unfollow
     user.profile.following.remove(test_user.profile)
     response = client.get(
-        f"/api/v1/profiles/{test_user.id}/is-following/{user.id}/"
+        f"/api/v1/profiles/{test_user.profile.username}/is-following/{user.profile.username}/"
     )
     assert response.status_code == 200
     assert response.data["is_following"] == False
