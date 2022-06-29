@@ -22,7 +22,8 @@ def test_create_post_no_authentication(client):
 
     response = client.post("/api/v1/posts/", post_data)
 
-    assert response.status_code == 403
+
+    assert response.status_code == 401
 
 
 @pytest.mark.django_db
