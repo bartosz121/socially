@@ -70,7 +70,8 @@ def test_follow_suggestions(user, client):
         CustomUserFactory(),
         CustomUserFactory(),
     ]
-    expected_suggestions.reverse()  # for zip in assert
+
+    expected_ids = [user.id for user in expected_suggestions]
 
     response = client.get(f"/api/v1/profiles/{user.profile.username}/follow-suggestions/")
     assert response.status_code == 200
@@ -79,8 +80,7 @@ def test_follow_suggestions(user, client):
 
     assert all(
         [
-            r_obj["user_id"] == u_obj.id
-            for r_obj, u_obj in zip(data, expected_suggestions)
+            response_suggestion["user_id"] in expected_ids for response_suggestion in data
         ]
     )
 
