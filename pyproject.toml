@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "social-network-django"
+name = "socially"
 version = "0.1.0"
 description = "Social network website created in django"
 authors = ["Your Name <you@example.com>"]
@@ -20,14 +20,14 @@ factory-boy = "^3.2.0"
 Faker = "^8.14.1"
 django-htmx = "^1.6.0"
 djangorestframework = "^3.13.1"
-pytest = "^7.1.1"
-pytest-django = "^4.5.2"
 dj-rest-auth = { extras = ["with_social"], version = "^2.2.4" }
 djangorestframework-simplejwt = "^5.1.0"
 django-cors-headers = "^3.11.0"
 
 [tool.poetry.dev-dependencies]
 black = { version = "^21.8b0", allow-prereleases = true }
+pytest = "^7.1.2"
+pytest-django = "^4.5.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
