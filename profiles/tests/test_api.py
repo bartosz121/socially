@@ -126,3 +126,50 @@ def test_most_followers(user, client):
 
     assert data[0]["user_id"] == most_followed_user.id
     assert data[1]["user_id"] == user.id
+
+@pytest.mark.django_db
+def test_viewset_list(client):
+    PAGINATED_RESULT_ITEM_COUNT = 10
+
+    profiles = [CustomUserFactory().profile for _ in range(15)]
+    profiles.reverse()
+    profiles_usernames = [profile.username for profile in profiles[:PAGINATED_RESULT_ITEM_COUNT]]
+
+    response = client.get("/api/v1/profiles/")
+    assert response.status_code == 200
+
+    data = response.data
+    assert data["next"].endswith("?page=2")
+    assert data["previous"] is None
+    assert data["count"] == len(profiles)
+
+    assert all([expected_username == p["username"] for expected_username, p in zip(profiles_usernames, data["results"])])
+
+
+
+@pytest.mark.django_db
+def test_viewset_retrieve(client):
+    profile = CustomUserFactory().profile
+    response = client.get(f"/api/v1/profiles/{profile.username}/")
+    assert response.status_code == 200
+    assert response.data["username"] == profile.username
+
+@pytest.mark.django_db
+def test_follow_stats(client):
+    follow_target = CustomUserFactory()
+
+    # 6 followers and 5 following
+    for i in range(11):
+        user = CustomUserFactory()
+        if i % 2 == 0:
+            follow_target.profile.followers.add(user.profile)
+        else:
+            user.profile.followers.add(follow_target.profile)
+
+    response = client.get(f"/api/v1/profiles/{follow_target.profile.username}/follow/count/")
+    assert response.status_code == 200
+
+    data = response.data
+    assert data["user_id"] == follow_target.id
+    assert data["followers"] == 6
+    assert data["following"] == 5
