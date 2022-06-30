@@ -15,12 +15,13 @@ from .models import Post
 class PostViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
     mixins.RetrieveModelMixin,
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
     """
-    ViewSet for listing, retrieving, destroying and liking posts
+    ViewSet for listing, retrieving, updating, destroying and liking posts
     """
 
     queryset = Post.objects.all()
@@ -69,6 +70,12 @@ class PostViewSet(
 
             serializer.save(author=request.user, parent=parent_post)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def perform_update(self, serializer):
+        super().perform_update(serializer)
+        if "picture" not in serializer.validated_data:
+            serializer.instance.picture.delete(save=True)
+
 
     def retrieve(self, request, pk=None):
         queryset = self.get_queryset()

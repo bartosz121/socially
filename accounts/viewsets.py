@@ -7,17 +7,19 @@ from rest_framework.response import Response
 from api.utils import get_paginated_queryset_response
 from posts.models import Post
 from posts.serializers import PostSerializer
-from .models import CustomUser
+from profiles.models import Profile
 
 
 class UserViewSet(viewsets.GenericViewSet):
-    queryset = CustomUser.objects.all()
+    # Profile queryset because we use username as identifier in urls
+    queryset = Profile.objects.all()
+    lookup_field = "profile__username"
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     @action(methods=["GET"], detail=True, url_name="posts", url_path="posts")
-    def user_posts(self, request, pk=None):
+    def user_posts(self, request, profile__username=None):
         qs = self.get_queryset()
-        user = get_object_or_404(qs, pk=pk)
+        user: Profile = get_object_or_404(qs, username=profile__username)
         user_posts_qs = Post.objects.user_posts(user)
 
         return get_paginated_queryset_response(
@@ -30,9 +32,9 @@ class UserViewSet(viewsets.GenericViewSet):
         url_name="feed",
         url_path="feed",
     )
-    def user_feed(self, request, pk=None):
-        user_qs = self.get_queryset()
-        user = get_object_or_404(user_qs, pk=pk)
+    def user_feed(self, request, profile__username=None):
+        qs = self.get_queryset()
+        user: Profile = get_object_or_404(qs, username=profile__username)
 
         feed_qs = Post.objects.user_feed(user)
 
@@ -46,9 +48,9 @@ class UserViewSet(viewsets.GenericViewSet):
         url_name="liked",
         url_path="liked/(?P<post_pk>[0-9]+)",
     )
-    def user_liked(self, request, pk=None, post_pk=None):
+    def user_liked(self, request, profile__username=None, post_pk=None):
         user_qs = self.get_queryset()
-        user = get_object_or_404(user_qs, pk=pk)
+        user = get_object_or_404(user_qs, username=profile__username)
 
         post_qs = Post.objects.all()
         post = get_object_or_404(post_qs, pk=post_pk)

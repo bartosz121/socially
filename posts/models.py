@@ -1,9 +1,12 @@
+from typing import Union
 from django.db import models
 from django.db.models import Q, Count, OuterRef, Subquery
 from django.urls import reverse
 from django.conf import settings
 from pathlib import Path
 import uuid
+
+from profiles.models import Profile
 
 User = settings.AUTH_USER_MODEL
 
@@ -18,11 +21,14 @@ class PostQuerySet(models.QuerySet):
     def latest(self):
         return self.order_by("-created")
 
-    def feed(self, user):
+    def feed(self, user: Union[User.__class__, Profile]):
         """
         Returns posts created by followed user authors.
         If not following anyone return latest posts
         """
+        if isinstance(user, Profile):
+            return self.feed(user.user)
+
         profile = user.profile
 
         is_following_anyone = profile.following.exists()
@@ -44,6 +50,9 @@ class PostQuerySet(models.QuerySet):
     def by_user(self, user):
         return self.filter(author=user).order_by("-created")
 
+    def by_profile(self, user_profile):
+        return self.by_user(user_profile.user)
+
     def with_comment_count(self):
         """Annotate queryset with `comments_count`"""
         subquery_parent_count = Post.objects.filter(parent_id=OuterRef("pk"))
@@ -61,8 +70,8 @@ class PostManager(models.Manager):
     def latest(self):
         return self.get_queryset().latest()
 
-    def user_feed(self, user):
-        return self.get_queryset().feed(user)
+    def user_feed(self, user_identifier: Union[User.__class__, Profile]):
+        return self.get_queryset().feed(user_identifier)
 
     def get_comments(self, post):
         return self.get_queryset().comments_to(post)
@@ -71,8 +80,11 @@ class PostManager(models.Manager):
         queryset = self.get_queryset().with_comment_count()
         return queryset.order_by("-comments_count")[:n]
 
-    def user_posts(self, user):
-        return self.get_queryset().by_user(user)
+    def user_posts(self, user_identifier: Union[User.__class__, Profile]):
+        if isinstance(user_identifier, User.__class__):
+            return self.get_queryset().by_user(user_identifier)
+
+        return self.get_queryset().by_profile(user_identifier)
 
 
 class Post(models.Model):

@@ -11,7 +11,7 @@ def test_user_posts(user, client):
 
     user_posts.reverse()  # for zip in assert
 
-    response = client.get(f"/api/v1/users/{user.id}/posts/")
+    response = client.get(f"/api/v1/users/{user.profile.username}/posts/")
     assert response.status_code == 200
 
     result = response.data["results"]
@@ -37,7 +37,7 @@ def test_user_feed(user, client):
     test_users[1].profile.followers.add(user.profile)
 
     expected_user_feed = [p1, p2]
-    response = client.get(f"/api/v1/users/{user.id}/feed/")
+    response = client.get(f"/api/v1/users/{user.profile.username}/feed/")
 
     assert response.status_code == 200
 
@@ -62,7 +62,7 @@ def test_user_liked(user, client):
     posts[1].likes.add(user)
 
     for i, post in enumerate(posts):
-        response = client.get(f"/api/v1/users/{user.id}/liked/{post.id}/")
+        response = client.get(f"/api/v1/users/{user.profile.username}/liked/{post.id}/")
         assert response.status_code == 200
 
         if i == 2:
