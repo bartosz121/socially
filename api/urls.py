@@ -4,8 +4,8 @@ from rest_framework.routers import DefaultRouter
 from posts.viewsets import PostViewSet
 from profiles.viewsets import ProfileViewSet
 from accounts.viewsets import UserViewSet
+from accounts.views import RegisterView
 
-from .views import RegisterView
 
 app_name = "api"
 
