@@ -5,6 +5,8 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers, exceptions
 from rest_framework.exceptions import ValidationError
 
+from .forms import ChangeEmailAddressForm
+
 try:
     from allauth.account import app_settings as allauth_settings
     from allauth.utils import email_address_exists
@@ -140,3 +142,32 @@ class UserDetailsSerializer(serializers.ModelSerializer):
             "username",
             "profile_picture",
         ]
+
+
+class EmailChangeSerializer(serializers.Serializer):
+    old_email = serializers.CharField(max_length=128)
+    new_email1 = serializers.CharField(max_length=128)
+    new_email2 = serializers.CharField(max_length=128)
+
+    set_email_form = ChangeEmailAddressForm
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.request = self.context.get("request")
+        self.user = getattr(self.request, "user", None)
+
+    def validate_old_email(self, value):
+        if self.user.email != value:
+            raise serializers.ValidationError("Your old email is incorrect")
+        return value
+
+    def validate(self, attrs):
+        self.set_email_form = self.set_email_form(user=self.user, data=attrs)
+
+        if not self.set_email_form.is_valid():
+            raise serializers.ValidationError(self.set_email_form.errors)
+        return attrs
+
+    def save(self):
+        self.set_email_form.save()
