@@ -1,6 +1,11 @@
+from django.conf import settings
+from django.forms import ValidationError
 from rest_framework import serializers
 
+from mixins.compare_images_mixin import CompareImagesMixin
+
 from .models import Profile
+from .signals import post_save_check_images
 
 
 class ProfileBasicSerializer(serializers.ModelSerializer):
@@ -14,7 +19,11 @@ class ProfileBasicSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ["user_id", "username", "profile_picture",]
+        fields = [
+            "user_id",
+            "username",
+            "profile_picture",
+        ]
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -78,3 +87,41 @@ class ProfileFollowCountSerializer(serializers.ModelSerializer):
 
     def get_following(self, obj):
         return obj.get_following_count()
+
+
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ["username", "profile_picture", "profile_background", "bio"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def _set_profile_picture_to_default(self, profile):
+        profile.profile_picture = Profile.profile_picture.field.default
+
+    def _set_profile_background_to_default(self, profile):
+        profile.profile_background = Profile.profile_background.field.default
+
+    def update(self, instance, validated_data):
+        old_images = {
+            "profile_picture": instance.profile_picture.path,
+            "profile_background": instance.profile_background.path,
+        }
+
+        if not validated_data.get("profile_picture", None):
+            self._set_profile_picture_to_default(instance)
+
+        if not validated_data.get("profile_background", None):
+            self._set_profile_background_to_default(instance)
+
+        updated_instance = super().update(instance, validated_data)
+
+        post_save_check_images.send(
+            sender=Profile,
+            instance=instance,
+            created=False,
+            old_images=old_images,
+        )
+
+        return updated_instance
