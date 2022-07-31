@@ -30,7 +30,9 @@ class ChangeEmailAddressForm(forms.Form):
         new_email2 = self.cleaned_data.get("new_email2")
         if new_email1 and new_email2:
             if new_email1 != new_email2:
-                raise forms.ValidationError("New emails dont match", code="new_email_mismatch")
+                raise forms.ValidationError(
+                    "New emails dont match", code="new_email_mismatch"
+                )
         return new_email2
 
     def save(self, commit=True):
@@ -39,6 +41,7 @@ class ChangeEmailAddressForm(forms.Form):
         if commit:
             self.user.save()
         return self.user
+
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:

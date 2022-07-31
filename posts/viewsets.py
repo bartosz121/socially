@@ -76,7 +76,6 @@ class PostViewSet(
         if "picture" not in serializer.validated_data:
             serializer.instance.picture.delete(save=True)
 
-
     def retrieve(self, request, pk=None):
         queryset = self.get_queryset()
 

@@ -21,6 +21,7 @@ class RegisterView(DjRegisterView):
     def perform_create(self, serializer):
         return super().perform_create(serializer)
 
+
 class EmailChangeView(UpdateAPIView):
     serializer_class = EmailChangeSerializer
     permission_classes = (IsAuthenticated,)
