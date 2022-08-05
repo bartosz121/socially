@@ -6,9 +6,9 @@ from posts.models import Post
 from posts.tests.factories import PostFactory
 
 SMALL_IMAGE = (
-    b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x00\x00\x00\x21\xf9\x04'
-    b'\x01\x0a\x00\x01\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02'
-    b'\x02\x4c\x01\x00\x3b'
+    b"\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x00\x00\x00\x21\xf9\x04"
+    b"\x01\x0a\x00\x01\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02"
+    b"\x02\x4c\x01\x00\x3b"
 )
 
 
@@ -21,6 +21,7 @@ def test_create_post(auth_client):
 
     assert response.status_code == 201
     assert data["body"] == post_data["body"]
+
 
 @pytest.mark.django_db
 def test_create_post_with_parent(auth_client):
@@ -41,7 +42,6 @@ def test_create_post_no_authentication(client):
     post_data = {"body": "Hello world"}
 
     response = client.post("/api/v1/posts/", post_data)
-
 
     assert response.status_code == 401
 
@@ -137,6 +137,7 @@ def test_destroy_post_permission(auth_client):
 
     assert response.status_code == 403
 
+
 @pytest.mark.django_db
 def test_viewset_list(client):
     POST_FACTORY_COUNT = 15
@@ -145,8 +146,12 @@ def test_viewset_list(client):
     posts = [PostFactory() for _ in range(POST_FACTORY_COUNT)]
     posts.reverse()
 
-    expected_result_ids_page_1 = [post.id for post in posts[:PAGINATED_RESULT_ITEM_COUNT]]
-    expected_result_ids_page_2 = [post.id for post in posts[PAGINATED_RESULT_ITEM_COUNT:]]
+    expected_result_ids_page_1 = [
+        post.id for post in posts[:PAGINATED_RESULT_ITEM_COUNT]
+    ]
+    expected_result_ids_page_2 = [
+        post.id for post in posts[PAGINATED_RESULT_ITEM_COUNT:]
+    ]
 
     response = client.get("/api/v1/posts/")
 
@@ -160,7 +165,14 @@ def test_viewset_list(client):
     assert data["next"].endswith("?page=2")
     assert data["previous"] is None
     assert len(data["results"]) == PAGINATED_RESULT_ITEM_COUNT
-    assert all([expected_id == response_id for expected_id, response_id in zip(expected_result_ids_page_1, response_page_1_ids)])
+    assert all(
+        [
+            expected_id == response_id
+            for expected_id, response_id in zip(
+                expected_result_ids_page_1, response_page_1_ids
+            )
+        ]
+    )
 
     # page 2
     response = client.get("/api/v1/posts/?page=2")
@@ -174,13 +186,27 @@ def test_viewset_list(client):
     assert data["next"] is None
     assert data["previous"].endswith("/api/v1/posts/")
     assert len(data["results"]) == expected_page_2_len
-    assert all([expected_id == response_id for expected_id, response_id in zip(expected_result_ids_page_2, response_page_2_ids)])
+    assert all(
+        [
+            expected_id == response_id
+            for expected_id, response_id in zip(
+                expected_result_ids_page_2, response_page_2_ids
+            )
+        ]
+    )
 
 
 @pytest.mark.django_db
 def test_viewset_update(auth_client):
-    post_data = {"body": "Hello world", "picture_url": SimpleUploadedFile("test_image.jpg", content=SMALL_IMAGE, content_type='image/jpeg')}
-    response = auth_client.post("/api/v1/posts/", post_data, format="multipart")
+    post_data = {
+        "body": "Hello world",
+        "picture_url": SimpleUploadedFile(
+            "test_image.jpg", content=SMALL_IMAGE, content_type="image/jpeg"
+        ),
+    }
+    response = auth_client.post(
+        "/api/v1/posts/", post_data, format="multipart"
+    )
     assert response.status_code == 201
     assert response.data["picture_url"]
 

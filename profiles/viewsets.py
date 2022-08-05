@@ -157,7 +157,9 @@ class ProfileViewSet(
 
         return Response(serializer.data)
 
-    @action(methods=["GET"], detail=True, url_name="count", url_path="follow/count")
+    @action(
+        methods=["GET"], detail=True, url_name="count", url_path="follow/count"
+    )
     def follow_stats(self, request, username=None, *args, **kwargs):
         qs = self.get_queryset()
         target = get_object_or_404(qs, username=username)

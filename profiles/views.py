@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.shortcuts import redirect, get_object_or_404
@@ -5,14 +6,17 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.views import View
 from django.views.generic.detail import DetailView
+from rest_framework.generics import UpdateAPIView
+from rest_framework.permissions import IsAuthenticated
+
+
 from accounts.models import CustomUser
-from .models import Profile
 from posts.decorators import get_paginator_hx
+from profiles.serializers import ProfileUpdateSerializer
+from .models import Profile
 
 
 # HTMX
-
-
 @get_paginator_hx("htmx/_hx/profiles/profile_list_hx.html")
 def profile_followers_hx(request, pk):
     profile = get_object_or_404(Profile, pk=pk)
@@ -79,3 +83,20 @@ class HandleFollow(LoginRequiredMixin, View):
                 kwargs={"username": user[0].profile.username},
             )
         )
+
+
+class ProfileUpdateView(UpdateAPIView):
+    serializer_class = ProfileUpdateSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self):
+        return self.request.user.profile
+
+    def get_queryset(self):
+        return Profile.objects.none()
+
+    def put(self, request, *args, **kwargs):
+        return super().put(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return super().patch(request, *args, **kwargs)

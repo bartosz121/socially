@@ -36,7 +36,9 @@ def test_following(user, client):
 
     test_user.profile.followers.add(user.profile)
 
-    response = client.get(f"/api/v1/profiles/{user.profile.username}/following/")
+    response = client.get(
+        f"/api/v1/profiles/{user.profile.username}/following/"
+    )
     assert response.status_code == 200
 
     data = response.data["results"]
@@ -51,7 +53,9 @@ def test_followers(user, client):
 
     user.profile.followers.add(test_user.profile)
 
-    response = client.get(f"/api/v1/profiles/{user.profile.username}/followers/")
+    response = client.get(
+        f"/api/v1/profiles/{user.profile.username}/followers/"
+    )
     assert response.status_code == 200
 
     data = response.data["results"]
@@ -73,14 +77,17 @@ def test_follow_suggestions(user, client):
 
     expected_ids = [user.id for user in expected_suggestions]
 
-    response = client.get(f"/api/v1/profiles/{user.profile.username}/follow-suggestions/")
+    response = client.get(
+        f"/api/v1/profiles/{user.profile.username}/follow-suggestions/"
+    )
     assert response.status_code == 200
 
     data = response.data
 
     assert all(
         [
-            response_suggestion["user_id"] in expected_ids for response_suggestion in data
+            response_suggestion["user_id"] in expected_ids
+            for response_suggestion in data
         ]
     )
 
@@ -127,13 +134,16 @@ def test_most_followers(user, client):
     assert data[0]["user_id"] == most_followed_user.id
     assert data[1]["user_id"] == user.id
 
+
 @pytest.mark.django_db
 def test_viewset_list(client):
     PAGINATED_RESULT_ITEM_COUNT = 10
 
     profiles = [CustomUserFactory().profile for _ in range(15)]
     profiles.reverse()
-    profiles_usernames = [profile.username for profile in profiles[:PAGINATED_RESULT_ITEM_COUNT]]
+    profiles_usernames = [
+        profile.username for profile in profiles[:PAGINATED_RESULT_ITEM_COUNT]
+    ]
 
     response = client.get("/api/v1/profiles/")
     assert response.status_code == 200
@@ -143,8 +153,14 @@ def test_viewset_list(client):
     assert data["previous"] is None
     assert data["count"] == len(profiles)
 
-    assert all([expected_username == p["username"] for expected_username, p in zip(profiles_usernames, data["results"])])
-
+    assert all(
+        [
+            expected_username == p["username"]
+            for expected_username, p in zip(
+                profiles_usernames, data["results"]
+            )
+        ]
+    )
 
 
 @pytest.mark.django_db
@@ -153,6 +169,7 @@ def test_viewset_retrieve(client):
     response = client.get(f"/api/v1/profiles/{profile.username}/")
     assert response.status_code == 200
     assert response.data["username"] == profile.username
+
 
 @pytest.mark.django_db
 def test_follow_stats(client):
@@ -166,7 +183,9 @@ def test_follow_stats(client):
         else:
             user.profile.followers.add(follow_target.profile)
 
-    response = client.get(f"/api/v1/profiles/{follow_target.profile.username}/follow/count/")
+    response = client.get(
+        f"/api/v1/profiles/{follow_target.profile.username}/follow/count/"
+    )
     assert response.status_code == 200
 
     data = response.data

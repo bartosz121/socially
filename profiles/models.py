@@ -1,3 +1,5 @@
+import os
+from typing import Dict
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
@@ -5,8 +7,12 @@ from django.db.models.signals import post_save
 from django.db.models import Count
 from pathlib import Path
 import uuid
+from mixins.compare_images_mixin import CompareImagesMixin
 
-from .mixins import ResizeImageMixin
+from mixins.remove_file_mixin import RemoveFileMixin
+from mixins.resize_image_mixin import ResizeImageMixin
+
+from .signals import post_save_check_images
 
 
 User = settings.AUTH_USER_MODEL
@@ -46,10 +52,7 @@ class ProfileManager(models.Manager):
         return queryset[:n]
 
 
-class Profile(
-    models.Model,
-    ResizeImageMixin,
-):
+class Profile(models.Model):
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -99,12 +102,17 @@ class Profile(
     def get_followers_count(self):
         return self.followers.count()
 
-    def save(self, *args, **kwargs):
-        self.resize(self.profile_picture.path, settings.PROFILE_PICTURE_SIZE)
-        self.resize(
-            self.profile_background.path, settings.PROFILE_BACKGROUND_SIZE
+    def is_using_default_profile_picture(self) -> bool:
+        return (
+            os.path.split(self.profile_picture.path)[-1]
+            == os.path.split(self.profile_picture.field.default)[-1]
         )
-        super().save(*args, **kwargs)
+
+    def if_using_default_background_picture(self) -> bool:
+        return (
+            os.path.split(self.profile_background.path)[-1]
+            == os.path.split(self.profile_background.field.default)[-1]
+        )
 
     def get_absolute_url(self):
         return reverse(
@@ -120,4 +128,38 @@ def user_did_save(sender, instance, created, *args, **kwargs):
         )
 
 
+def profile_check_images_post_save(
+    sender, instance, created, old_images: Dict[str, str], *args, **kwargs
+):
+    """Checks if new image is the same as old one, if yes use old one and remove new and resize"""
+    resizer = ResizeImageMixin()
+    remover = RemoveFileMixin()
+    comparer = CompareImagesMixin()
+
+    for key, path in old_images.items():
+        current = getattr(instance, key)
+        _, filename = os.path.split(path)
+        if comparer.imgs_are_equal(current.path, path):
+            setattr(instance, key, f"profile_images/{filename}")
+            # set filename and path to new image, it will be deleted
+            _, filename = os.path.split(current.path)
+            path = current.path
+
+        if filename not in (
+            "profile_default.png",
+            "background_default.jpg",
+        ):
+            remover.remove_file(path)
+
+    instance.save()
+
+    resizer.resize(instance.profile_picture.path, settings.PROFILE_PICTURE_SIZE)
+    resizer.resize(
+        instance.profile_background.path, settings.PROFILE_BACKGROUND_SIZE
+    )
+
+
+
+
 post_save.connect(user_did_save, sender=User)
+post_save_check_images.connect(profile_check_images_post_save, sender=Profile)

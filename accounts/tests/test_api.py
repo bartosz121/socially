@@ -62,7 +62,9 @@ def test_user_liked(user, client):
     posts[1].likes.add(user)
 
     for i, post in enumerate(posts):
-        response = client.get(f"/api/v1/users/{user.profile.username}/liked/{post.id}/")
+        response = client.get(
+            f"/api/v1/users/{user.profile.username}/liked/{post.id}/"
+        )
         assert response.status_code == 200
 
         if i == 2:
